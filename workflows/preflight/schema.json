@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agent Routines workflow result",
+  "type": "object",
+  "required": ["ok", "workflow", "cwd", "os", "checks", "warnings", "errors"],
+  "properties": {
+    "ok": { "type": "boolean" },
+    "workflow": { "type": "string" },
+    "cwd": { "type": "string" },
+    "os": { "type": "string" },
+    "checks": { "type": "array" },
+    "warnings": { "type": "array" },
+    "errors": { "type": "array" }
+  },
+  "additionalProperties": true
+}

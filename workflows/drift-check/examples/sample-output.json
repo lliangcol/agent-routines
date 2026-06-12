@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "workflow": "drift-check",
+  "cwd": ".",
+  "os": "windows",
+  "checks": [
+    { "name": "markdown-files-scanned", "ok": true, "details": "10 Markdown files scanned, capped at 200." }
+  ],
+  "warnings": [
+    "This workflow does not accept fingerprints, promote stubs, or edit documentation."
+  ],
+  "errors": []
+}

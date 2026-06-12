@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "workflow": "governance-check",
+  "cwd": ".",
+  "os": "windows",
+  "checks": [
+    { "name": "governance-path:AGENTS.md", "ok": true, "details": "Current checkout governance path probe." }
+  ],
+  "warnings": [
+    "Archived or cutover documents are context only; this workflow checks current checkout paths."
+  ],
+  "errors": []
+}

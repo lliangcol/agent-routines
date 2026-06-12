@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "user": {
+    "codex": {
+      "skills": ["guarded-change", "review-loop", "merge-fix", "env-audit", "runtime-repair"],
+      "workflows": ["preflight", "gate-check", "merge-check", "runtime-check"]
+    },
+    "claudeCode": {
+      "skills": ["guarded-change", "review-loop", "merge-fix", "env-audit", "runtime-repair"],
+      "workflows": ["preflight", "gate-check", "merge-check", "runtime-check"]
+    }
+  },
+  "projects": [
+    {
+      "path": ".",
+      "codex": {
+        "workflows": ["preflight", "gate-check", "governance-check", "node-workspace-check", "drift-check"]
+      },
+      "claudeCode": {
+        "workflows": ["preflight", "gate-check", "governance-check"]
+      }
+    }
+  ]
+}

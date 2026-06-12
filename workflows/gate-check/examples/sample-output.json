@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "workflow": "gate-check",
+  "cwd": "/path/to/repository",
+  "os": "cross-platform",
+  "checks": [
+    {
+      "name": "example",
+      "ok": true,
+      "details": "Sample output for gate-check."
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}
