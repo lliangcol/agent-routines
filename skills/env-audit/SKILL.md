@@ -27,7 +27,7 @@ Source fallback:
 
 - `workflows/<workflow-name>/`
 
-Recommended workflows: preflight, gate-check
+Recommended workflows: preflight, gate-check, runtime-check, startup-check
 
 ## Human Confirmation Gates
 
