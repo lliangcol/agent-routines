@@ -1,5 +1,7 @@
 # Agent Routines
 
+[![CI](https://github.com/lliangcol/agent-routines/actions/workflows/ci.yml/badge.svg)](https://github.com/lliangcol/agent-routines/actions/workflows/ci.yml)
+
 Chinese description: 可分发的 AI Agent 日常流程、Skills 和自动化脚本库。
 
 Agent Routines is a versioned, GitHub-ready source repository for reusable AI Agent Skills, deterministic workflows, installation adapters, manuals, validation scripts, and Mermaid diagrams. The source repository is the maintenance source of truth. Codex and Claude Code user or project directories are installation targets only.
@@ -19,15 +21,21 @@ From the source repository root:
 .\tests\validate-structure.ps1
 .\tests\validate-skills.ps1
 .\tests\validate-workflows.ps1
+.\tests\validate-docs.ps1
 .\tests\validate-manifest.ps1 -ManifestPath .\distribution\agent-routines.manifest.json
+.\tests\run-workflows.ps1
 ```
 
 ```bash
 ./tests/validate-structure.sh
 ./tests/validate-skills.sh
 ./tests/validate-workflows.sh
+./tests/validate-docs.sh
 ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
+./tests/run-workflows.sh
 ```
+
+`validate-docs` checks bilingual documentation pairing and catalog consistency. `run-workflows` executes every workflow against a temporary fixture repository and validates the JSON output contract. The same gates run in CI on Ubuntu, macOS, and Windows (PowerShell 7 and Windows PowerShell 5.1).
 
 ## Codex User-Level Installation
 
@@ -98,8 +106,15 @@ The workflow runtime includes readonly checks for preflight state, gates, commit
 - `workflows/`: deterministic workflow scripts, schemas, and sample outputs.
 - `adapters/`: Codex and Claude Code installers and uninstallers.
 - `distribution/`: manifest examples for reviewed user-level and project-level distribution.
-- `docs/`: architecture, distribution, compatibility, security, diagrams, and authoring manuals.
-- `tests/`: structure, Skill, workflow, and manifest validators for PowerShell and Bash.
+- `docs/`: architecture, distribution, compatibility, security, diagrams, authoring manuals, and the release process.
+- `tests/`: structure, Skill, workflow, docs, and manifest validators plus workflow smoke tests, for PowerShell and Bash.
+- `executions/`: durable evidence packs for significant operations, following the archive-record layout.
+
+## Contributing and Governance
+
+- `AGENTS.md`: hard rules and validation gates for AI agents working in this repository.
+- `CONTRIBUTING.md`: checklists for adding Skills and workflows, and the required gates before any commit.
+- `docs/release-process.md`: versioning policy and release steps (`docs/release-process.zh-CN.md` for Chinese).
 
 ## Security Boundaries
 
