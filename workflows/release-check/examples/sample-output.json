@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "workflow": "release-check",
+  "cwd": ".",
+  "os": "windows",
+  "checks": [
+    { "name": "release-path:README.md", "ok": true, "details": "Release surface path probe." },
+    { "name": "release-path:package.json", "ok": false, "details": "Release surface path probe." }
+  ],
+  "warnings": [
+    "This workflow does not publish, tag, push, mutate versions, install dependencies, or create release artifacts."
+  ],
+  "errors": []
+}

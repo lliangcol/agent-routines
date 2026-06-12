@@ -8,7 +8,9 @@
 
 Use Skills for judgment-heavy work. Use workflows when you need stable JSON and repeatable checks.
 
-For cross-project reuse, install guarded-change, review-loop, merge-fix, env-audit, and runtime-repair at user level. Install project-specific behavior at project level only after reviewing the target repository rules.
+For a complete inventory, see [Routine Catalog](catalog.md). For prompt and command examples, see [Routine Examples](examples.md).
+
+For cross-project reuse, install the broadly reusable Skills from the manifest at user level: guarded-change, review-loop, merge-fix, env-audit, runtime-repair, commit-guard, prompt-qa, release-guard, security-review, github-guard, and graph-audit. Install project-specific behavior at project level only after reviewing the target repository rules.
 
 Use domain workflows as readonly probes before making changes:
 

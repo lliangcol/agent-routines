@@ -2,12 +2,12 @@
   "version": 1,
   "user": {
     "codex": {
-      "skills": ["guarded-change", "review-loop", "merge-fix", "env-audit", "runtime-repair"],
-      "workflows": ["preflight", "gate-check", "merge-check", "runtime-check"]
+      "skills": ["guarded-change", "review-loop", "merge-fix", "env-audit", "runtime-repair", "commit-guard", "prompt-qa", "release-guard", "security-review", "github-guard", "graph-audit"],
+      "workflows": ["preflight", "gate-check", "merge-check", "runtime-check", "commit-check", "release-check", "security-check", "github-check", "graph-check"]
     },
     "claudeCode": {
-      "skills": ["guarded-change", "review-loop", "merge-fix", "env-audit", "runtime-repair"],
-      "workflows": ["preflight", "gate-check", "merge-check", "runtime-check"]
+      "skills": ["guarded-change", "review-loop", "merge-fix", "env-audit", "runtime-repair", "commit-guard", "prompt-qa", "release-guard", "security-review", "github-guard", "graph-audit"],
+      "workflows": ["preflight", "gate-check", "merge-check", "runtime-check", "commit-check", "release-check", "security-check", "github-check", "graph-check"]
     }
   },
   "projects": [

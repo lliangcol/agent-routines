@@ -9,6 +9,7 @@ $required = @(
     'README.md','LICENSE','CHANGELOG.md','distribution/agent-routines.manifest.json',
     'skills/guarded-change/SKILL.md','skills/review-loop/SKILL.md','skills/merge-fix/SKILL.md','skills/api-sync/SKILL.md','skills/dms-repair/SKILL.md','skills/pay-docs/SKILL.md','skills/env-audit/SKILL.md',
     'skills/runtime-repair/SKILL.md','skills/java-maven-verify/SKILL.md','skills/governance-audit/SKILL.md','skills/archive-record/SKILL.md','skills/node-workspace-release/SKILL.md','skills/knowledge-drift/SKILL.md',
+    'skills/commit-guard/SKILL.md','skills/prompt-qa/SKILL.md','skills/release-guard/SKILL.md','skills/security-review/SKILL.md','skills/github-guard/SKILL.md','skills/graph-audit/SKILL.md',
     'workflows/preflight/preflight.ps1','workflows/preflight/preflight.sh','workflows/preflight/schema.json','workflows/preflight/examples/sample-output.json',
     'workflows/gate-check/gate-check.ps1','workflows/gate-check/gate-check.sh','workflows/gate-check/schema.json','workflows/gate-check/examples/sample-output.json',
     'workflows/merge-check/merge-check.ps1','workflows/merge-check/merge-check.sh','workflows/merge-check/schema.json','workflows/merge-check/examples/sample-output.json',
@@ -21,10 +22,15 @@ $required = @(
     'workflows/node-workspace-check/node-workspace-check.ps1','workflows/node-workspace-check/node-workspace-check.sh','workflows/node-workspace-check/schema.json','workflows/node-workspace-check/examples/sample-output.json',
     'workflows/drift-check/drift-check.ps1','workflows/drift-check/drift-check.sh','workflows/drift-check/schema.json','workflows/drift-check/examples/sample-output.json',
     'workflows/startup-check/startup-check.ps1','workflows/startup-check/startup-check.sh','workflows/startup-check/schema.json','workflows/startup-check/examples/sample-output.json',
+    'workflows/commit-check/commit-check.ps1','workflows/commit-check/commit-check.sh','workflows/commit-check/schema.json','workflows/commit-check/examples/sample-output.json',
+    'workflows/release-check/release-check.ps1','workflows/release-check/release-check.sh','workflows/release-check/schema.json','workflows/release-check/examples/sample-output.json',
+    'workflows/security-check/security-check.ps1','workflows/security-check/security-check.sh','workflows/security-check/schema.json','workflows/security-check/examples/sample-output.json',
+    'workflows/github-check/github-check.ps1','workflows/github-check/github-check.sh','workflows/github-check/schema.json','workflows/github-check/examples/sample-output.json',
+    'workflows/graph-check/graph-check.ps1','workflows/graph-check/graph-check.sh','workflows/graph-check/schema.json','workflows/graph-check/examples/sample-output.json',
     'adapters/common/install-manifest.ps1','adapters/common/install-manifest.sh',
     'adapters/codex/install-user.ps1','adapters/codex/install-user.sh','adapters/codex/install-project.ps1','adapters/codex/install-project.sh','adapters/codex/install-manifest.ps1','adapters/codex/install-manifest.sh','adapters/codex/uninstall-user.ps1','adapters/codex/uninstall-user.sh','adapters/codex/uninstall-project.ps1','adapters/codex/uninstall-project.sh',
     'adapters/claude-code/install-user.ps1','adapters/claude-code/install-user.sh','adapters/claude-code/install-project.ps1','adapters/claude-code/install-project.sh','adapters/claude-code/install-manifest.ps1','adapters/claude-code/install-manifest.sh','adapters/claude-code/uninstall-user.ps1','adapters/claude-code/uninstall-user.sh','adapters/claude-code/uninstall-project.ps1','adapters/claude-code/uninstall-project.sh',
-    'docs/architecture.md','docs/distribution.md','docs/compatibility.md','docs/cross-platform.md','docs/naming.md','docs/security.md','docs/diagrams.md','docs/usage-manual.md','docs/skill-authoring-guide.md','docs/workflow-authoring-guide.md',
+    'docs/architecture.md','docs/distribution.md','docs/compatibility.md','docs/cross-platform.md','docs/naming.md','docs/security.md','docs/diagrams.md','docs/usage-manual.md','docs/usage-manual.zh-CN.md','docs/catalog.md','docs/catalog.zh-CN.md','docs/examples.md','docs/examples.zh-CN.md','docs/skill-authoring-guide.md','docs/workflow-authoring-guide.md',
     'tests/validate-structure.ps1','tests/validate-structure.sh','tests/validate-skills.ps1','tests/validate-skills.sh','tests/validate-workflows.ps1','tests/validate-workflows.sh','tests/validate-manifest.ps1','tests/validate-manifest.sh'
 )
 $missing = @()

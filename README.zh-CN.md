@@ -84,6 +84,12 @@ Agent Routines 是一个可版本化、适合托管在 GitHub 的源代码仓库
 
 Manifest 模式只复制清单中列出的 Skill 和 workflow 目录。它不会移除 manifest 中不存在的已安装内容。使用 `-Force` 或 `--force` 替换已经存在的目标目录。
 
+## 已包含例行能力
+
+本仓库包含用于受控改动、已验证提交、提示词 QA、review 循环、merge 修复、API 同步、DMS 修复、支付文档、环境审计、运行时修复、Maven 验证、治理审计、归档记录、Node 工作区发布、公开发布就绪、安全审查、GitHub 策略规划、graph 审计和知识漂移检查的 Skills。
+
+workflow 运行时包含针对 preflight 状态、门禁、提交、发布、安全发现、GitHub workflow 证据、graph 就绪、merge、归档、数据库 SQL 形态、文档、运行时、Maven、治理状态、Node 工作区、知识漂移和 Windows 启动项的只读检查。
+
 ## 目录结构
 
 - `skills/`：工具中立的 Skill 目录，包含 `SKILL.md`、README 和 references。

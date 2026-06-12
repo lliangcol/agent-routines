@@ -8,7 +8,9 @@
 
 判断密集型工作使用 Skills。需要稳定 JSON 和可重复检查时使用 workflows。
 
-跨项目复用时，可以在用户级安装 guarded-change、review-loop、merge-fix、env-audit 和 runtime-repair。项目特定行为应在审阅目标仓库规则后再安装到项目级。
+完整清单见 [例行能力清单](catalog.zh-CN.md)。提示词和命令示例见 [例行能力使用示例](examples.zh-CN.md)。
+
+跨项目复用时，可以在用户级安装 manifest 中的通用 Skills：guarded-change、review-loop、merge-fix、env-audit、runtime-repair、commit-guard、prompt-qa、release-guard、security-review、github-guard 和 graph-audit。项目特定行为应在审阅目标仓库规则后再安装到项目级。
 
 改动前可以用领域 workflows 做只读探测：
 

@@ -15,12 +15,24 @@ for workflow_dir in "$workflow_root"/*; do
   done
   sample="$workflow_dir/examples/sample-output.json"
   if [ -f "$sample" ]; then
-    if command -v python >/dev/null 2>&1; then
-      python -m json.tool "$sample" >/dev/null || errors+=("Invalid sample JSON: $name")
+    if command -v python3 >/dev/null 2>&1 || command -v python >/dev/null 2>&1; then
+      py="$(command -v python3 2>/dev/null || command -v python)"
+      "$py" - "$sample" "$name" <<'PY' || errors+=("Invalid sample JSON or missing required property: $name")
+import json
+import sys
+
+sample_path, workflow_name = sys.argv[1], sys.argv[2]
+with open(sample_path, encoding="utf-8") as f:
+    doc = json.load(f)
+missing = [key for key in ("ok", "workflow", "cwd", "os", "checks", "warnings", "errors") if key not in doc]
+if missing:
+    sys.stderr.write(f"{workflow_name}: missing properties: {', '.join(missing)}\n")
+    raise SystemExit(1)
+PY
     elif command -v node >/dev/null 2>&1; then
-      node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'))" "$sample" || errors+=("Invalid sample JSON: $name")
+      node -e "const doc = JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8')); for (const key of ['ok','workflow','cwd','os','checks','warnings','errors']) if (!(key in doc)) process.exit(1);" "$sample" || errors+=("Invalid sample JSON or missing required property: $name")
     elif command -v jq >/dev/null 2>&1; then
-      jq empty "$sample" >/dev/null || errors+=("Invalid sample JSON: $name")
+      jq -e 'has("ok") and has("workflow") and has("cwd") and has("os") and has("checks") and has("warnings") and has("errors")' "$sample" >/dev/null || errors+=("Invalid sample JSON or missing required property: $name")
     else
       printf 'validate-workflows: warning: no JSON parser found; skipped sample parse for %s\n' "$name" >&2
     fi

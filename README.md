@@ -88,9 +88,9 @@ Manifest mode copies only the listed Skill and workflow folders. It does not rem
 
 ## Included Routines
 
-The repository includes Skills for guarded changes, review loops, merge fixes, API sync, DMS repair, payment docs, environment audits, runtime repair, Maven verification, governance audits, archive records, Node workspace releases, and knowledge drift checks.
+The repository includes Skills for guarded changes, validated commits, prompt QA, review loops, merge fixes, API sync, DMS repair, payment docs, environment audits, runtime repair, Maven verification, governance audits, archive records, Node workspace releases, public release readiness, security review, GitHub policy planning, graph audits, and knowledge drift checks.
 
-The workflow runtime includes readonly checks for preflight state, gates, merges, archives, database SQL shape, docs, runtime setup, Maven setup, governance state, Node workspaces, knowledge drift, and Windows startup sources.
+The workflow runtime includes readonly checks for preflight state, gates, commits, releases, security findings, GitHub workflow evidence, graph readiness, merges, archives, database SQL shape, docs, runtime setup, Maven setup, governance state, Node workspaces, knowledge drift, and Windows startup sources.
 
 ## Directory Structure
 

@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "workflow": "graph-check",
+  "cwd": ".",
+  "os": "windows",
+  "checks": [
+    { "name": "command:codebase-memory-mcp", "ok": false, "details": "Command not found." },
+    { "name": "graph-first-instructions", "ok": false, "details": "No graph-first repo instruction file found." }
+  ],
+  "warnings": [
+    "Project indexing status must be confirmed through the active MCP graph tool when available; otherwise use targeted file inspection."
+  ],
+  "errors": []
+}

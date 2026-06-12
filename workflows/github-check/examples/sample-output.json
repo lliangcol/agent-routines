@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "workflow": "github-check",
+  "cwd": ".",
+  "os": "windows",
+  "checks": [
+    { "name": "github-workflows-directory", "ok": false, "details": ".github/workflows probe." }
+  ],
+  "warnings": [
+    "No .github/workflows directory found; required checks cannot be inferred from local workflow evidence."
+  ],
+  "errors": []
+}
