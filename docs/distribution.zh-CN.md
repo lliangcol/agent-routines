@@ -21,7 +21,30 @@
 
 当一个经过审阅的文件需要同时决定用户级和项目级安装范围时，使用 manifest 安装。Manifest 模式是增量复制：它只复制列出的 Skill 和 workflow 目录，绝不移除未列入 manifest 的已安装内容。
 
-PowerShell manifest 入口使用 `-ManifestPath <path>`。Bash manifest 入口使用 `--manifest-path PATH`，并需要 `python3`、`python`、`node` 或 `jq` 中至少一个 JSON 解析器。Manifest 中的相对项目路径按源仓库根目录解析。`-Force` 和 `--force` 会替换已经存在的列名目标目录。
+```json
+{
+  "version": 1,
+  "user": {
+    "codex": {
+      "skills": ["guarded-change"],
+      "workflows": ["preflight"]
+    }
+  },
+  "projects": [
+    {
+      "path": "C:\\path\\to\\repo",
+      "claudeCode": {
+        "skills": ["pay-docs"],
+        "workflows": ["doc-check"]
+      }
+    }
+  ]
+}
+```
+
+PowerShell manifest 入口使用 `-ManifestPath <path>`。Bash manifest 入口使用 `--manifest-path PATH`，并需要 `python3`、`python`、`node` 或 `jq` 中至少一个 JSON 解析器。Manifest 中的相对项目路径按源仓库根目录解析。`-Force` 和 `--force` 会替换已经存在的列名目标目录。Manifest 模式应使用专用的 `install-manifest` 入口，而不是 user 或 project 安装器。
+
+默认示例 manifest 只在用户级安装广泛可复用的 Skills，项目级条目只保留通用 workflow runtime 目录。仓库专属的 Skills（如特定项目的支付、数据库或 agent 投影）应留在对应项目中，除非被明确提升为通用能力。
 
 ## 更新策略
 

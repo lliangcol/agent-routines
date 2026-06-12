@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+jobs:
+  bash:
+    name: Bash gates (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: validate-structure
+        run: ./tests/validate-structure.sh
+      - name: validate-skills
+        run: ./tests/validate-skills.sh
+      - name: validate-workflows
+        run: ./tests/validate-workflows.sh
+      - name: validate-docs
+        run: ./tests/validate-docs.sh
+      - name: validate-manifest
+        run: ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
+      - name: run-workflows (smoke)
+        run: ./tests/run-workflows.sh
+
+  powershell:
+    name: PowerShell gates (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: validate-structure (pwsh)
+        shell: pwsh
+        run: ./tests/validate-structure.ps1
+      - name: validate-skills (pwsh)
+        shell: pwsh
+        run: ./tests/validate-skills.ps1
+      - name: validate-workflows (pwsh)
+        shell: pwsh
+        run: ./tests/validate-workflows.ps1
+      - name: validate-docs (pwsh)
+        shell: pwsh
+        run: ./tests/validate-docs.ps1
+      - name: validate-manifest (pwsh)
+        shell: pwsh
+        run: ./tests/validate-manifest.ps1 -ManifestPath ./distribution/agent-routines.manifest.json
+      - name: run-workflows smoke (pwsh)
+        shell: pwsh
+        run: ./tests/run-workflows.ps1
+      - name: validate-structure (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./tests/validate-structure.ps1
+      - name: validate-skills (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./tests/validate-skills.ps1
+      - name: validate-workflows (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./tests/validate-workflows.ps1
+      - name: validate-docs (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./tests/validate-docs.ps1
+      - name: validate-manifest (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./tests/validate-manifest.ps1 -ManifestPath ./distribution/agent-routines.manifest.json
+      - name: run-workflows smoke (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./tests/run-workflows.ps1
