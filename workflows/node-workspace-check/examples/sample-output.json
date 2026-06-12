@@ -4,7 +4,11 @@
   "cwd": ".",
   "os": "windows",
   "checks": [
-    { "name": "package-json", "ok": true, "details": "Root package.json probe." }
+    {
+      "name": "package-json",
+      "ok": true,
+      "details": "Root package.json probe."
+    }
   ],
   "warnings": [
     "This workflow does not install dependencies, mutate versions, or publish packages."

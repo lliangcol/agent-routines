@@ -4,7 +4,11 @@
   "cwd": ".",
   "os": "windows",
   "checks": [
-    { "name": "scheduled-task-probe", "ok": true, "details": "0 startup-like scheduled tasks matched, capped at 30." }
+    {
+      "name": "scheduled-task-probe",
+      "ok": true,
+      "details": "0 startup-like scheduled tasks matched, capped at 30."
+    }
   ],
   "warnings": [
     "This workflow only reads startup sources; it does not remove registry values or disable tasks."

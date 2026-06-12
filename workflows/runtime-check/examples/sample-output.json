@@ -4,7 +4,11 @@
   "cwd": ".",
   "os": "windows",
   "checks": [
-    { "name": "command:node", "ok": true, "details": "node detected" }
+    {
+      "name": "command:node",
+      "ok": true,
+      "details": "node detected"
+    }
   ],
   "warnings": [
     "This workflow does not reinstall packages, edit settings, or mutate PATH."

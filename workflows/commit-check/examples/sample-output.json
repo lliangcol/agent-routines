@@ -4,8 +4,16 @@
   "cwd": ".",
   "os": "windows",
   "checks": [
-    { "name": "git-repository", "ok": true, "details": "Inside a git work tree." },
-    { "name": "git-diff-cached-check", "ok": true, "details": "No whitespace errors in staged diff." }
+    {
+      "name": "git-repository",
+      "ok": true,
+      "details": "Inside a git work tree."
+    },
+    {
+      "name": "git-diff-cached-check",
+      "ok": true,
+      "details": "No whitespace errors in staged diff."
+    }
   ],
   "warnings": [
     "This workflow does not stage, commit, push, tag, or rewrite history."

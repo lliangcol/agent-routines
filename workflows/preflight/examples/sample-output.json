@@ -2,7 +2,7 @@
   "ok": true,
   "workflow": "preflight",
   "cwd": "/path/to/repository",
-  "os": "cross-platform",
+  "os": "linux",
   "checks": [
     {
       "name": "example",

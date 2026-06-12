@@ -31,7 +31,9 @@ json_escape() {
   value="${value//$'\n'/\\n}"
   value="${value//$'\r'/\\r}"
   value="${value//$'\t'/\\t}"
-  printf '%s' "$value"
+  value="${value//$'\b'/\\b}"
+  value="${value//$'\f'/\\f}"
+  printf '%s' "$value" | tr -d '\000-\010\013\014\016-\037\177'
 }
 
 checks=""

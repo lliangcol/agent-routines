@@ -4,7 +4,11 @@
   "cwd": ".",
   "os": "windows",
   "checks": [
-    { "name": "root-pom", "ok": true, "details": "Root pom.xml probe." }
+    {
+      "name": "root-pom",
+      "ok": true,
+      "details": "Root pom.xml probe."
+    }
   ],
   "warnings": [
     "This workflow does not edit Maven settings, delete caches, or run builds."

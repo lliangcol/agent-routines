@@ -4,8 +4,16 @@
   "cwd": ".",
   "os": "windows",
   "checks": [
-    { "name": "files-scanned", "ok": true, "details": "42 files scanned, files over 1 MiB skipped." },
-    { "name": "high-confidence-findings", "ok": true, "details": "No high-confidence secret-like findings." }
+    {
+      "name": "files-scanned",
+      "ok": true,
+      "details": "42 files scanned, files over 1 MiB skipped."
+    },
+    {
+      "name": "high-confidence-findings",
+      "ok": true,
+      "details": "No high-confidence secret-like findings."
+    }
   ],
   "warnings": [
     "This workflow does not delete files, rotate credentials, rewrite history, or publish results."

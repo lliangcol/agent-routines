@@ -2,15 +2,69 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Agent Routines workflow result",
   "type": "object",
-  "required": ["ok", "workflow", "cwd", "os", "checks", "warnings", "errors"],
+  "required": [
+    "ok",
+    "workflow",
+    "cwd",
+    "os",
+    "checks",
+    "warnings",
+    "errors"
+  ],
   "properties": {
-    "ok": { "type": "boolean" },
-    "workflow": { "type": "string" },
-    "cwd": { "type": "string" },
-    "os": { "type": "string" },
-    "checks": { "type": "array" },
-    "warnings": { "type": "array" },
-    "errors": { "type": "array" }
+    "ok": {
+      "type": "boolean"
+    },
+    "workflow": {
+      "const": "archive-check"
+    },
+    "cwd": {
+      "type": "string"
+    },
+    "os": {
+      "type": "string",
+      "enum": [
+        "windows",
+        "macos",
+        "linux",
+        "unknown"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "ok",
+          "details"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "details": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }
