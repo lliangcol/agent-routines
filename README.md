@@ -24,6 +24,7 @@ From the source repository root:
 .\tests\validate-docs.ps1
 .\tests\validate-changelog.ps1
 .\tests\validate-manifest.ps1 -ManifestPath .\distribution\agent-routines.manifest.json
+.\tests\validate-install-discovery-config.ps1 -ConfigPath .\tools\install-discovery.config.example.json
 .\tests\run-workflows.ps1
 ```
 
@@ -34,6 +35,7 @@ From the source repository root:
 ./tests/validate-docs.sh
 ./tests/validate-changelog.sh
 ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
+./tests/validate-install-discovery-config.sh --config-path ./tools/install-discovery.config.example.json
 ./tests/run-workflows.sh
 ```
 
@@ -96,6 +98,20 @@ Use a JSON manifest when you need one reviewed source of truth for which Skills 
 
 Manifest mode copies only the listed Skill and workflow folders. It does not remove installed content that is absent from the manifest. Use `-Force` or `--force` to replace listed targets that already exist.
 
+Before broad or team installation, run the installer dry-run mode once and review the target paths. PowerShell installers use `-WhatIf`; Bash installers use `--dry-run`.
+
+When a machine already has user-level and project-level installs spread across known project roots, generate a reviewed manifest plan from config instead of scanning the whole disk:
+
+```powershell
+.\tools\generate-install-manifest.ps1 -ConfigPath .\.agent-routines\install-discovery.config.json
+```
+
+```bash
+./tools/generate-install-manifest.sh --config-path ./.agent-routines/install-discovery.config.json
+```
+
+See `docs/install-discovery.md` and `tools/install-discovery.config.example.json`. The generator is dry-run by default; installation requires `-WriteManifest -Apply` or `--write-manifest --apply`.
+
 ## Installation Self-Check
 
 After installing, verify the integrity of installed Skills and workflows against the source repository. The check is readonly: it reports `ok`, `drift` (content differs from source, usually an older version), or `broken` (files missing), and exits nonzero only on `broken`.
@@ -126,6 +142,7 @@ The workflow runtime includes readonly checks for preflight state, gates, commit
 - `distribution/`: manifest examples for reviewed user-level and project-level distribution.
 - `docs/`: architecture, distribution, compatibility, security, diagrams, authoring manuals, and the release process.
 - `tests/`: structure, Skill, workflow, docs, and manifest validators plus workflow smoke tests, for PowerShell and Bash.
+- `tools/`: config-driven utilities for manifest discovery and installation planning.
 - `executions/`: durable evidence packs for significant operations, following the archive-record layout.
 
 ## Contributing and Governance
@@ -137,6 +154,8 @@ The workflow runtime includes readonly checks for preflight state, gates, commit
 ## Security Boundaries
 
 Scripts must not default to destructive operations. Database writes, production configuration, commit/push, deletes, external publishing, and DMS execution require human confirmation. Review Skills before installation, especially when installing into user-level directories shared by multiple projects.
+
+Public releases must include `SECURITY.md` and `SUPPORT.md`, and `release-check` should be run in public mode (`-Public` or `--public`) before tagging.
 
 ## Cross-Platform Support Summary
 

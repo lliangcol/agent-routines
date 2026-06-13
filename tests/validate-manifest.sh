@@ -58,10 +58,15 @@ def names(block, key, context):
         errors.append(f"{context}.{key} must be an array.")
         return []
     result = []
+    seen = set()
     for item in value:
         if not isinstance(item, str) or not item.strip() or not name_re.match(item):
             errors.append(f"{context}.{key} contains invalid name: {item!r}")
             continue
+        if item in seen:
+            errors.append(f"{context}.{key} contains duplicate name: {item}")
+            continue
+        seen.add(item)
         result.append(item)
     return result
 

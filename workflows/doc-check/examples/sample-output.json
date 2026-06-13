@@ -5,11 +5,18 @@
   "os": "linux",
   "checks": [
     {
-      "name": "example",
+      "name": "readme-present",
       "ok": true,
-      "details": "Sample output for doc-check."
+      "details": "Root README.md probe."
+    },
+    {
+      "name": "docs-present",
+      "ok": true,
+      "details": "docs directory probe."
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "Custom commands are screened by a readonly allowlist, a control-character filter, and a destructive-keyword denylist; this is best-effort screening, not a security boundary. The caller is responsible for passing readonly commands."
+  ],
   "errors": []
 }

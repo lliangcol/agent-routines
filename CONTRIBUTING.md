@@ -11,10 +11,14 @@ Read `AGENTS.md` (hard rules), `docs/skill-authoring-guide.md`, and `docs/workfl
 CI runs the full suite on Ubuntu (Bash) and Windows (PowerShell 7 and Windows PowerShell 5.1). Run locally before opening a PR:
 
 ```bash
-./tests/validate-structure.sh && ./tests/validate-skills.sh && ./tests/validate-workflows.sh && ./tests/validate-docs.sh && ./tests/validate-changelog.sh && ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json && ./tests/run-workflows.sh
+./tests/validate-structure.sh && ./tests/validate-skills.sh && ./tests/validate-workflows.sh && ./tests/validate-docs.sh && ./tests/validate-changelog.sh && ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json && ./tests/validate-install-discovery-config.sh --config-path ./tools/install-discovery.config.example.json && ./tests/run-workflows.sh
 ```
 
 `run-workflows` also asserts sh-vs-ps1 parity (same exit code, ok flag, check names, and warning/error counts) for every workflow whenever the counterpart shell is available, so keep both implementations in lockstep within a single change.
+
+`validate-workflows` checks both the schema and sample-output contract: `properties.workflow.const` must match the workflow directory name, top-level `additionalProperties` must be `false`, and the sample cannot carry extra top-level fields or a mismatched `workflow` value.
+
+`validate-manifest` rejects duplicate Skill or workflow names inside the same manifest block. Keep manifest edits reviewed as a distribution contract, not as an installer scratch file.
 
 When adding a new `.sh` file on Windows, set its executable bit in the git index before committing: `git update-index --chmod=+x <file>`. CI runs the Bash suite by direct invocation and fails on files without the bit.
 
@@ -45,6 +49,7 @@ Every file in `docs/` requires a `.zh-CN.md` counterpart with equivalent content
 
 - Keep commits scoped; reference the validator output in the PR description.
 - Releases follow `docs/release-process.md`: CHANGELOG entry, full gates, annotated `vX.Y.Z` tag.
+- Public releases must include root `SECURITY.md` and `SUPPORT.md` plus their Chinese counterparts, and must pass `release-check` in public mode (`-Public` or `--public`) before tagging.
 
 ## Branch Protection
 

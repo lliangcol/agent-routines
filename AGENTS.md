@@ -6,6 +6,18 @@ Instructions for AI agents working in this repository.
 
 A distributable library of agent Skills (judgment, Markdown), deterministic readonly workflows (Bash + PowerShell, stable JSON output), and installation adapters. The source repository is the only maintenance source of truth; installed copies under `~/.claude`, `~/.codex`, or `.agent-routines` are targets, never sources.
 
+## Codebase Discovery
+
+When codebase-memory-mcp is available and this repository is indexed, prefer graph tools over text search for code discovery:
+
+1. `search_graph` -- find functions, classes, routes, variables, and scripts by pattern.
+2. `trace_path` -- trace callers, callees, or data flow.
+3. `get_code_snippet` -- read specific function or class source after locating the exact qualified name.
+4. `query_graph` -- run complex graph queries.
+5. `get_architecture` -- get a high-level project summary.
+
+Fall back to `rg`, file search, or direct file reading when the MCP project is not indexed, the graph results are insufficient, or the target is non-code content such as Markdown, JSON, shell scripts, CI config, or docs. Do not add a repo-local `.mcp.json` by default; MCP server paths are environment-specific and should be configured by each workspace.
+
 ## Validation Gates
 
 Run all of these before claiming any change is done. Bash and PowerShell suites must both pass.
@@ -17,6 +29,7 @@ Run all of these before claiming any change is done. Bash and PowerShell suites 
 ./tests/validate-docs.sh
 ./tests/validate-changelog.sh
 ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
+./tests/validate-install-discovery-config.sh --config-path ./tools/install-discovery.config.example.json
 ./tests/run-workflows.sh
 ```
 
@@ -27,6 +40,7 @@ Run all of these before claiming any change is done. Bash and PowerShell suites 
 .\tests\validate-docs.ps1
 .\tests\validate-changelog.ps1
 .\tests\validate-manifest.ps1 -ManifestPath .\distribution\agent-routines.manifest.json
+.\tests\validate-install-discovery-config.ps1 -ConfigPath .\tools\install-discovery.config.example.json
 .\tests\run-workflows.ps1
 ```
 

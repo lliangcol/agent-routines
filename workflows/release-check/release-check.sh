@@ -3,10 +3,12 @@ set -euo pipefail
 
 workflow="release-check"
 path="."
+public=false
 
 usage() {
-  printf 'Usage: %s [--path PATH]\n' "$0"
+  printf 'Usage: %s [--path PATH] [--public]\n' "$0"
   printf 'Produces stable JSON and performs only readonly checks.\n'
+  printf 'Use --public to require public release support and security disclosure files.\n'
 }
 
 require_value() {
@@ -20,6 +22,7 @@ while [ "$#" -gt 0 ]; do
   case "$1" in
     --help|-h) usage; exit 0 ;;
     --path) require_value "$@"; path="$2"; shift 2 ;;
+    --public) public=true; shift ;;
     *) printf 'Unknown argument: %s\n' "$1" >&2; exit 2 ;;
   esac
 done
@@ -36,7 +39,16 @@ detect_os() { case "$(uname -s 2>/dev/null || printf unknown)" in MINGW*|MSYS*|C
 
 if [ -d "$path" ]; then cwd="$(cd "$path" && pwd -P)"; cd "$path"; else cwd="$path"; add_error "Path does not exist: $path"; fi
 for item in README.md README.zh-CN.md LICENSE CHANGELOG.md SECURITY.md SUPPORT.md package.json pyproject.toml .github/workflows; do
-  [ -e "$item" ] && add_check "release-path:$item" true "Release surface path probe." || add_check "release-path:$item" false "Release surface path probe."
+  if [ -e "$item" ]; then
+    add_check "release-path:$item" true "Release surface path probe."
+  else
+    add_check "release-path:$item" false "Release surface path probe."
+    if [ "$public" = true ]; then
+      case "$item" in
+        SECURITY.md|SUPPORT.md) add_error "Public release requires $item." ;;
+      esac
+    fi
+  fi
 done
 for command_name in node npm pnpm python python3 git; do
   if command -v "$command_name" >/dev/null 2>&1; then add_check "command:$command_name" true "$(command -v "$command_name")"; else add_check "command:$command_name" false "Command not found."; fi
@@ -67,6 +79,7 @@ if [ -f pyproject.toml ]; then
   grep -Eq '^\[build-system\]' pyproject.toml && add_check "pyproject-build-system" true "pyproject.toml [build-system] table probe." || add_check "pyproject-build-system" false "pyproject.toml [build-system] table probe."
 fi
 if [ ! -f package.json ] && [ ! -f pyproject.toml ]; then add_warning "No package.json or pyproject.toml was found; release ecosystem could not be inferred."; fi
+if [ "$public" = true ]; then add_warning "Public release mode requires SECURITY.md and SUPPORT.md before release readiness can pass."; fi
 add_warning "This workflow does not publish, tag, push, mutate versions, install dependencies, or create release artifacts."
 
 ok=true

@@ -42,13 +42,15 @@ Use manifest installation when a single reviewed file should decide both scopes.
 }
 ```
 
-PowerShell manifest entrypoints use `-ManifestPath <path>`. Bash entrypoints use `--manifest-path PATH` and require one available JSON parser from `python3`, `python`, `node`, or `jq`. Relative project paths in a manifest are resolved from the source repository root. `-Force` and `--force` replace listed targets that already exist. Manifest mode should use the dedicated `install-manifest` entrypoints, not the user or project installers.
+PowerShell manifest entrypoints use `-ManifestPath <path>`. Bash entrypoints use `--manifest-path PATH` and require one available JSON parser from `python3`, `python`, `node`, or `jq`. Relative project paths in a manifest are resolved from the source repository root. `-Force` and `--force` replace listed targets that already exist. `-WhatIf` and `--dry-run` report planned installs and replacements without creating directories, copying files, deleting files, or replacing targets. Manifest mode should use the dedicated `install-manifest` entrypoints, not the user or project installers.
 
 The default example manifest installs only broadly reusable Skills at user level and keeps project-level entries to common workflow runtime folders. Project-owned Skills such as repository-specific payment, database, or agent projections should stay in those projects unless explicitly promoted.
 
+For existing machines with many user-level and project-level installs, use install discovery to generate a reviewed manifest plan from explicit project roots instead of hand-editing distribution manifests. See [Install Discovery](install-discovery.md).
+
 ## Update Strategy
 
-Update from the source repository, rerun validators, then reinstall with `--force` or `-Force` only after reviewing differences. Do not treat installed folders as the source of truth.
+Update from the source repository, rerun validators, then run a dry-run (`-WhatIf` or `--dry-run`) before reinstalling with `--force` or `-Force`. Do not treat installed folders as the source of truth.
 
 ## Uninstall Strategy
 

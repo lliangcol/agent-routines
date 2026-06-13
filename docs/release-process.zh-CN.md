@@ -16,14 +16,16 @@
 2. 在 `CHANGELOG.md` 中新增 `X.Y.Z - YYYY-MM-DD` 小节，列出用户可见的变更。
 3. 至少在一个 Bash 平台和一个 PowerShell 平台运行全部验证门禁：
    - `validate-structure`、`validate-skills`、`validate-workflows`、`validate-docs`、`validate-changelog`、`validate-manifest`、`run-workflows`。
-4. 确认发布 commit 的 CI 为绿色。
-5. 打 tag：`git tag -a vX.Y.Z -m "Agent Routines X.Y.Z"`。
-6. 推送分支和 tag：`git push origin main vX.Y.Z`（需要人工确认）。
-7. 从该 tag 创建 GitHub release，将 CHANGELOG 小节作为 release notes。
+4. 公开发布时，确认根目录 `SECURITY.md` 和 `SUPPORT.md` 存在，并以 public 模式运行 `release-check`（`-Public` 或 `--public`）。
+5. 确认发布 commit 的 CI 为绿色。
+6. 打 tag：`git tag -a vX.Y.Z -m "Agent Routines X.Y.Z"`。
+7. 推送分支和 tag：`git push origin main vX.Y.Z`（需要人工确认）。
+8. 从该 tag 创建 GitHub release，将 CHANGELOG 小节作为 release notes。
 
 ## 使用方升级指引
 
 - 安装时固定到 tag，不要跟随 `main`。
+- 大范围重装前先使用安装器 dry-run 模式（PowerShell 使用 `-WhatIf`，Bash 使用 `--dry-run`）。
 - 使用 `--force`/`-Force` 重装前，先 diff 新 tag 与已安装版本的差异，并重新审阅将进入用户级目录的 skills。
 - 卸载流程绝不移除未列出的内容；移除已重命名的例行流程需要对旧名称执行显式卸载。
 

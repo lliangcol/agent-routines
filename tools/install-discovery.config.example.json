@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "projectRoots": [
+    "D:\\Work\\Projects",
+    "D:\\Repositories"
+  ],
+  "tools": ["codex", "claudeCode"],
+  "projectDiscovery": {
+    "mode": "git-repos",
+    "maxDepth": 4,
+    "excludeDirs": [
+      ".git",
+      "node_modules",
+      "vendor",
+      "dist",
+      "build",
+      "target",
+      ".tmp",
+      ".cache",
+      "tmp",
+      "temp",
+      ".agent-routines",
+      ".codex",
+      ".claude"
+    ],
+    "skipNestedRepos": true
+  },
+  "scopePolicy": {
+    "desiredStateSource": "policy-with-installed-evidence",
+    "userLevelSkills": [
+      "guarded-change",
+      "review-loop",
+      "merge-fix",
+      "env-audit",
+      "runtime-repair",
+      "commit-guard",
+      "prompt-qa",
+      "release-guard",
+      "security-review",
+      "github-guard",
+      "graph-audit"
+    ],
+    "projectLevelOnlySkills": [
+      "pay-docs",
+      "dms-repair",
+      "api-sync",
+      "node-workspace-release"
+    ],
+    "userLevelWorkflows": [
+      "preflight",
+      "gate-check",
+      "merge-check",
+      "runtime-check",
+      "commit-check",
+      "release-check",
+      "security-check",
+      "github-check",
+      "graph-check"
+    ],
+    "projectDefaultWorkflows": [
+      "preflight",
+      "gate-check",
+      "governance-check"
+    ],
+    "unknownInstalledItems": "report-only"
+  },
+  "output": {
+    "manifestPath": ".agent-routines/generated/install.manifest.json",
+    "reportPath": ".agent-routines/generated/install.plan.json"
+  },
+  "install": {
+    "validateBeforeInstall": true,
+    "verifyAfterInstall": true,
+    "force": false
+  }
+}

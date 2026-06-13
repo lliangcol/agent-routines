@@ -139,6 +139,14 @@ try {
     Invoke-Case -Name 'gate-check' -Label 'gate-check readonly custom command accepted' -Expect 0 -Arguments @{ Path = $tmp; CustomCommand = 'git status --short' }
     Invoke-Case -Name 'gate-check' -Label 'gate-check control characters rejected' -Expect 1 -Arguments @{ Path = $tmp; CustomCommand = 'echo hi > out.txt' }
     Invoke-Case -Name 'gate-check' -Label 'gate-check non-allowlisted command rejected' -Expect 1 -Arguments @{ Path = $tmp; CustomCommand = 'curl https://example.com' }
+    Invoke-Case -Name 'doc-check' -Label 'doc-check readonly custom command accepted' -Expect 0 -Arguments @{ Path = $tmp; CustomCommand = 'git status --short' }
+    Invoke-Case -Name 'doc-check' -Label 'doc-check destructive custom command rejected' -Expect 1 -Arguments @{ Path = $tmp; CustomCommand = 'rm -rf /' }
+    Invoke-Case -Name 'doc-check' -Label 'doc-check control characters rejected' -Expect 1 -Arguments @{ Path = $tmp; CustomCommand = 'echo hi > out.txt' }
+    Invoke-Case -Name 'doc-check' -Label 'doc-check non-allowlisted command rejected' -Expect 1 -Arguments @{ Path = $tmp; CustomCommand = 'curl https://example.com' }
+    Invoke-Case -Name 'release-check' -Label 'release-check public docs required' -Expect 1 -Arguments @{ Path = $tmp; Public = $true }
+    Set-Content -LiteralPath (Join-Path $tmp 'SECURITY.md') -Value '# Security'
+    Set-Content -LiteralPath (Join-Path $tmp 'SUPPORT.md') -Value '# Support'
+    Invoke-Case -Name 'release-check' -Label 'release-check public docs accepted' -Expect 0 -Arguments @{ Path = $tmp; Public = $true }
 } finally {
     Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
 }
@@ -147,5 +155,5 @@ if ($failures.Count -gt 0) {
     Write-Error ($failures -join "`n")
     exit 1
 }
-Write-Host "run-workflows: ok ($count workflows executed, $parityCount parity comparisons, 6 targeted cases)"
+Write-Host "run-workflows: ok ($count workflows executed, $parityCount parity comparisons, 12 targeted cases)"
 exit 0

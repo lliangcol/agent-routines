@@ -5,34 +5,36 @@ This adapter installs or uninstalls Agent Routines Skills and workflow runtime f
 ## User-Level Install
 
 ```powershell
-.\install-user.ps1 [-SkillName guarded-change] [-SkipWorkflows] [-WorkflowsOnly] [-Force]
+.\install-user.ps1 [-SkillName guarded-change] [-SkipWorkflows] [-WorkflowsOnly] [-Force] [-WhatIf]
 ```
 
 ```bash
-./install-user.sh [--skill-name guarded-change] [--skip-workflows] [--workflows-only] [--force]
+./install-user.sh [--skill-name guarded-change] [--skip-workflows] [--workflows-only] [--force] [--dry-run]
 ```
 
 ## Project-Level Install
 
 ```powershell
-.\install-project.ps1 -ProjectPath <repo> [-SkillName guarded-change] [-SkipWorkflows] [-WorkflowsOnly] [-Force]
+.\install-project.ps1 -ProjectPath <repo> [-SkillName guarded-change] [-SkipWorkflows] [-WorkflowsOnly] [-Force] [-WhatIf]
 ```
 
 ```bash
-./install-project.sh --project-path <repo> [--skill-name guarded-change] [--skip-workflows] [--workflows-only] [--force]
+./install-project.sh --project-path <repo> [--skill-name guarded-change] [--skip-workflows] [--workflows-only] [--force] [--dry-run]
 ```
 
 ## Manifest Install
 
 ```powershell
-.\install-manifest.ps1 -ManifestPath <path> [-Force]
+.\install-manifest.ps1 -ManifestPath <path> [-Force] [-WhatIf]
 ```
 
 ```bash
-./install-manifest.sh --manifest-path PATH [--force]
+./install-manifest.sh --manifest-path PATH [--force] [--dry-run]
 ```
 
 Manifest mode reads user-level and project-level targets from one JSON file. It copies only the listed Skill and workflow folders and does not delete installed content that is absent from the manifest.
+
+Use `-WhatIf` or `--dry-run` before broad installation to print the targets that would be installed, replaced, or skipped. Dry-run mode does not create directories, copy files, remove files, or replace existing targets.
 
 ## Self-Check
 

@@ -35,11 +35,17 @@ function Get-Names {
         return @()
     }
     $result = @()
+    $seen = @{}
     foreach ($item in $prop.Value) {
         if ($item -isnot [string] -or [string]::IsNullOrWhiteSpace($item) -or $item -notmatch '^[a-z0-9]+(-[a-z0-9]+)*$') {
             $script:errors += "$Context.$PropertyName contains invalid name: $item"
             continue
         }
+        if ($seen.ContainsKey($item)) {
+            $script:errors += "$Context.$PropertyName contains duplicate name: $item"
+            continue
+        }
+        $seen[$item] = $true
         $result += $item
     }
     return $result

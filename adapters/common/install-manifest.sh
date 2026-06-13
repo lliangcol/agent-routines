@@ -4,9 +4,10 @@ set -euo pipefail
 tool=""
 manifest_path=""
 force=false
+dry_run=false
 
 usage() {
-  printf 'Usage: %s --tool codex|claude-code --manifest-path PATH [--force]\n' "$0"
+  printf 'Usage: %s --tool codex|claude-code --manifest-path PATH [--force] [--dry-run]\n' "$0"
 }
 
 require_value() {
@@ -22,6 +23,7 @@ while [ "$#" -gt 0 ]; do
     --tool) require_value "$@"; tool="$2"; shift 2 ;;
     --manifest-path) require_value "$@"; manifest_path="$2"; shift 2 ;;
     --force) force=true; shift ;;
+    --dry-run) dry_run=true; shift ;;
     *) printf 'Unknown argument: %s\n' "$1" >&2; exit 2 ;;
   esac
 done
@@ -94,9 +96,9 @@ def emit(scope, project_path, kind, name):
 user = doc.get("user") or {}
 block = user.get(tool_key) or {}
 for skill in names(block, "skills", f"user.{tool_key}"):
-    emit("user", "", "skill", skill)
+    emit("user", ".", "skill", skill)
 for workflow in names(block, "workflows", f"user.{tool_key}"):
-    emit("user", "", "workflow", workflow)
+    emit("user", ".", "workflow", workflow)
 
 projects = doc.get("projects") or []
 if not isinstance(projects, list):
@@ -138,8 +140,8 @@ function emit(scope, projectPath, kind, name) {
   console.log(fields.join("\t"));
 }
 const userBlock = ((doc.user || {})[toolKey]) || {};
-for (const skill of names(userBlock, "skills", `user.${toolKey}`)) emit("user", "", "skill", skill);
-for (const workflow of names(userBlock, "workflows", `user.${toolKey}`)) emit("user", "", "workflow", workflow);
+for (const skill of names(userBlock, "skills", `user.${toolKey}`)) emit("user", ".", "skill", skill);
+for (const workflow of names(userBlock, "workflows", `user.${toolKey}`)) emit("user", ".", "workflow", workflow);
 const projects = doc.projects || [];
 if (!Array.isArray(projects)) throw new Error("projects must be an array.");
 for (const project of projects) {
@@ -157,8 +159,8 @@ parse_with_jq() {
     if .version != 1 then error("Manifest version must be 1.")
     elif ((.projects // []) | type) != "array" then error("projects must be an array.")
     else
-      ((.user[$tool].skills // [])[] | ["user", "", "skill", .] | @tsv),
-      ((.user[$tool].workflows // [])[] | ["user", "", "workflow", .] | @tsv),
+      ((.user[$tool].skills // [])[] | ["user", ".", "skill", .] | @tsv),
+      ((.user[$tool].workflows // [])[] | ["user", ".", "workflow", .] | @tsv),
       ((.projects // [])[] as $project |
         if (($project.path // "") == "") then error("Every project entry must include path.")
         else
@@ -186,6 +188,7 @@ parse_manifest() {
 
 installed=()
 skipped=()
+planned=()
 sources=()
 targets=()
 kinds=()
@@ -250,11 +253,19 @@ fi
 copy_dir_safe() {
   local source="$1"
   local target="$2"
+  local action="install"
   if [ -e "$target" ]; then
     if [ "$force" != true ]; then
       skipped+=("exists:$target")
       return
     fi
+    action="replace"
+  fi
+  if [ "$dry_run" = true ]; then
+    planned+=("$action:$target")
+    return
+  fi
+  if [ -e "$target" ]; then
     rm -rf -- "$target"
   fi
   mkdir -p -- "$(dirname "$target")"
@@ -268,5 +279,7 @@ done
 
 printf 'Manifest install summary\n'
 printf 'Tool: %s\n' "$tool"
+printf 'Dry run: %s\n' "$dry_run"
+printf 'Planned: %s\n' "${planned[*]:-}"
 printf 'Installed: %s\n' "${installed[*]:-}"
 printf 'Skipped: %s\n' "${skipped[*]:-}"

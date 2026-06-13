@@ -22,3 +22,9 @@ flowchart LR
 - Workflow 运行时：`~/.agent-routines/workflows` 或 `.agent-routines/workflows`
 
 Skills 应优先引用已安装的 workflow 运行时路径，其次才引用源仓库。工具特定行为应放在 adapters 或文档中。
+
+## 发现流程与 Graph 治理
+
+当本仓库已经被 codebase-memory-mcp 索引时，agent 应优先使用 graph 工具：`search_graph`、`trace_path`、`get_code_snippet`、`query_graph`，然后是 `get_architecture`。如果项目未索引、graph 结果不足，或目标是 Markdown、JSON、shell 脚本、CI 配置、文档等非代码内容，则回退到 `rg`、文件搜索或直接阅读，并记录回退原因。
+
+Graph 和 MCP 配置属于环境层，而不是源仓库产物。本仓库在 `AGENTS.md` 中记录 graph-first 发现规则，但默认不分发 `.mcp.json`，因为 MCP server 路径通常与用户和 workspace 绑定。

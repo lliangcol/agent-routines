@@ -1,11 +1,13 @@
 param(
     [string]$Path = '.',
+    [switch]$Public,
     [switch]$Help
 )
 
 if ($Help) {
-    Write-Host "Usage: .\release-check.ps1 [-Path <path>]"
+    Write-Host "Usage: .\release-check.ps1 [-Path <path>] [-Public]"
     Write-Host "Produces stable JSON and performs only readonly checks."
+    Write-Host "Use -Public to require public release support and security disclosure files."
     exit 0
 }
 
@@ -36,7 +38,11 @@ try {
     }
 
     foreach ($item in @('README.md','README.zh-CN.md','LICENSE','CHANGELOG.md','SECURITY.md','SUPPORT.md','package.json','pyproject.toml','.github/workflows')) {
-        Add-Check "release-path:$item" (Test-Path -LiteralPath (Join-Path (Get-Location) $item)) 'Release surface path probe.'
+        $exists = Test-Path -LiteralPath (Join-Path (Get-Location) $item)
+        Add-Check "release-path:$item" $exists 'Release surface path probe.'
+        if ($Public -and -not $exists -and @('SECURITY.md','SUPPORT.md') -contains $item) {
+            Add-Error "Public release requires $item."
+        }
     }
 
     foreach ($name in @('node','npm','pnpm','python','python3','git')) { Add-CommandProbe $name }
@@ -58,6 +64,9 @@ try {
 
     if (-not (Test-Path -LiteralPath $packageJson) -and -not (Test-Path -LiteralPath $pyproject)) {
         Add-Warning 'No package.json or pyproject.toml was found; release ecosystem could not be inferred.'
+    }
+    if ($Public) {
+        Add-Warning 'Public release mode requires SECURITY.md and SUPPORT.md before release readiness can pass.'
     }
     Add-Warning 'This workflow does not publish, tag, push, mutate versions, install dependencies, or create release artifacts.'
 } catch {

@@ -16,14 +16,16 @@ This repository versions the whole routine library as one unit. Consumers pin a 
 2. Update `CHANGELOG.md` with a new `X.Y.Z - YYYY-MM-DD` section listing user-visible changes.
 3. Run all validation gates on at least one Bash and one PowerShell platform:
    - `validate-structure`, `validate-skills`, `validate-workflows`, `validate-docs`, `validate-changelog`, `validate-manifest`, `run-workflows`.
-4. Confirm CI is green for the release commit.
-5. Tag: `git tag -a vX.Y.Z -m "Agent Routines X.Y.Z"`.
-6. Push branch and tag: `git push origin main vX.Y.Z` (requires human confirmation).
-7. Create a GitHub release from the tag; paste the CHANGELOG section as release notes.
+4. For a public release, confirm root `SECURITY.md` and `SUPPORT.md` exist, then run `release-check` in public mode (`-Public` or `--public`).
+5. Confirm CI is green for the release commit.
+6. Tag: `git tag -a vX.Y.Z -m "Agent Routines X.Y.Z"`.
+7. Push branch and tag: `git push origin main vX.Y.Z` (requires human confirmation).
+8. Create a GitHub release from the tag; paste the CHANGELOG section as release notes.
 
 ## Consumer Update Guidance
 
 - Pin installs to a tag, not to `main`.
+- Use installer dry-run mode before broad reinstallations (`-WhatIf` in PowerShell, `--dry-run` in Bash).
 - Before reinstalling with `--force`/`-Force`, diff the new tag against the installed version and re-review skills going to user-level directories.
 - Uninstall flows never remove unlisted content; removing a renamed routine requires an explicit uninstall of the old name.
 

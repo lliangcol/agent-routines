@@ -5,11 +5,12 @@ skill_name=""
 skip_workflows=false
 workflows_only=false
 force=false
+dry_run=false
 project_path=""
 project_required=true
 
 usage() {
-  printf 'Usage: %s --project-path PATH [--skill-name NAME] [--skip-workflows] [--workflows-only] [--force]\n' "$0"
+  printf 'Usage: %s --project-path PATH [--skill-name NAME] [--skip-workflows] [--workflows-only] [--force] [--dry-run]\n' "$0"
 }
 
 require_value() {
@@ -26,6 +27,7 @@ while [ "$#" -gt 0 ]; do
     --skip-workflows) skip_workflows=true; shift ;;
     --workflows-only) workflows_only=true; shift ;;
     --force) force=true; shift ;;
+    --dry-run) dry_run=true; shift ;;
     --project-path) require_value "$@"; project_path="$2"; shift 2 ;;
     *) printf 'Unknown argument: %s\n' "$1" >&2; exit 2 ;;
   esac
@@ -61,10 +63,12 @@ fi
 
 installed=()
 skipped=()
+planned=()
 
 copy_dir_safe() {
   local source="$1"
   local target="$2"
+  local action="install"
   if [ ! -d "$source" ]; then
     printf 'Source not found: %s\n' "$source" >&2
     exit 1
@@ -74,6 +78,13 @@ copy_dir_safe() {
       skipped+=("exists:$target")
       return
     fi
+    action="replace"
+  fi
+  if [ "$dry_run" = true ]; then
+    planned+=("$action:$target")
+    return
+  fi
+  if [ -e "$target" ]; then
     rm -rf -- "$target"
   fi
   mkdir -p -- "$(dirname "$target")"
@@ -96,5 +107,7 @@ if [ "$skip_workflows" != true ]; then
 fi
 
 printf 'Install summary\n'
+printf 'Dry run: %s\n' "$dry_run"
+printf 'Planned: %s\n' "${planned[*]:-}"
 printf 'Installed: %s\n' "${installed[*]:-}"
 printf 'Skipped: %s\n' "${skipped[*]:-}"

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 - 2026-06-13
+
+- Hardened `doc-check` custom command screening to match `gate-check`: shell control characters, destructive keywords, `--output`, non-allowlisted commands, and non-readonly `git` subcommands are rejected.
+- Added public release governance: root `SECURITY.md` / `SUPPORT.md` with Chinese counterparts, `release-check` public mode, and docs that require these files before public promotion.
+- Added config-driven install discovery with dry-run manifest generation, reviewed config validation, and CI coverage for the example config.
+- Persisted graph-first code discovery guidance in `AGENTS.md` and documentation without adding a repo-local `.mcp.json`.
+- Strengthened workflow and manifest validators for schema/sample drift and duplicate names inside manifest blocks.
+- Added installer dry-run support (`-WhatIf` for PowerShell, `--dry-run` for Bash) across user, project, and manifest install entrypoints.
+- Pinned GitHub Actions dependencies to commit SHAs while documenting the upstream tags.
+
 ## 0.3.0 - 2026-06-13
 
 - Fixed the executable bit on all 34 tracked `.sh` files (`git update-index --chmod=+x`); direct `./tests/*.sh` invocation previously failed with Permission denied on Linux/macOS checkouts. CI keeps a defensive `chmod +x tests/*.sh` step.

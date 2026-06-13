@@ -157,9 +157,17 @@ run_case "gate-check" "gate-check destructive custom command rejected" 1 --path 
 run_case "gate-check" "gate-check readonly custom command accepted" 0 --path "$tmp" --custom-command "git status --short"
 run_case "gate-check" "gate-check control characters rejected" 1 --path "$tmp" --custom-command "echo hi > out.txt"
 run_case "gate-check" "gate-check non-allowlisted command rejected" 1 --path "$tmp" --custom-command "curl https://example.com"
+run_case "doc-check" "doc-check readonly custom command accepted" 0 --path "$tmp" --custom-command "git status --short"
+run_case "doc-check" "doc-check destructive custom command rejected" 1 --path "$tmp" --custom-command "rm -rf /"
+run_case "doc-check" "doc-check control characters rejected" 1 --path "$tmp" --custom-command "echo hi > out.txt"
+run_case "doc-check" "doc-check non-allowlisted command rejected" 1 --path "$tmp" --custom-command "curl https://example.com"
+run_case "release-check" "release-check public docs required" 1 --path "$tmp" --public
+printf '# Security\n' > "$tmp/SECURITY.md"
+printf '# Support\n' > "$tmp/SUPPORT.md"
+run_case "release-check" "release-check public docs accepted" 0 --path "$tmp" --public
 
 if [ "${#failures[@]}" -gt 0 ]; then
   printf '%s\n' "${failures[@]}" >&2
   exit 1
 fi
-printf 'run-workflows: ok (%s workflows executed, %s parity comparisons, 6 targeted cases)\n' "$count" "$parity_count"
+printf 'run-workflows: ok (%s workflows executed, %s parity comparisons, 12 targeted cases)\n' "$count" "$parity_count"

@@ -20,6 +20,7 @@ Agent Routines 是一个可版本化、适合托管在 GitHub 的源代码仓库
 .\tests\validate-docs.ps1
 .\tests\validate-changelog.ps1
 .\tests\validate-manifest.ps1 -ManifestPath .\distribution\agent-routines.manifest.json
+.\tests\validate-install-discovery-config.ps1 -ConfigPath .\tools\install-discovery.config.example.json
 .\tests\run-workflows.ps1
 ```
 
@@ -30,6 +31,7 @@ Agent Routines 是一个可版本化、适合托管在 GitHub 的源代码仓库
 ./tests/validate-docs.sh
 ./tests/validate-changelog.sh
 ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
+./tests/validate-install-discovery-config.sh --config-path ./tools/install-discovery.config.example.json
 ./tests/run-workflows.sh
 ```
 
@@ -92,6 +94,20 @@ Agent Routines 是一个可版本化、适合托管在 GitHub 的源代码仓库
 
 Manifest 模式只复制清单中列出的 Skill 和 workflow 目录。它不会移除 manifest 中不存在的已安装内容。使用 `-Force` 或 `--force` 替换已经存在的目标目录。
 
+进行大范围或团队安装前，先运行一次安装器 dry-run 并审阅目标路径。PowerShell 安装器使用 `-WhatIf`，Bash 安装器使用 `--dry-run`。
+
+当一台机器上已经在已知项目根目录中分散安装了用户级和项目级内容时，应基于配置生成经过审阅的 manifest 计划，而不是扫描全盘：
+
+```powershell
+.\tools\generate-install-manifest.ps1 -ConfigPath .\.agent-routines\install-discovery.config.json
+```
+
+```bash
+./tools/generate-install-manifest.sh --config-path ./.agent-routines/install-discovery.config.json
+```
+
+详见 `docs/install-discovery.zh-CN.md` 和 `tools/install-discovery.config.example.json`。生成器默认 dry-run；只有传入 `-WriteManifest -Apply` 或 `--write-manifest --apply` 才执行安装。
+
 ## 安装自检
 
 安装后可对照源仓库校验已安装 Skills 和 workflows 的完整性。该检查是只读的：结果分为 `ok`、`drift`（内容与源仓库不一致，通常是旧版本）和 `broken`（文件缺失），只有出现 `broken` 时退出码非零。
@@ -119,12 +135,16 @@ workflow 运行时包含针对 preflight 状态、门禁、提交、发布、安
 - `skills/`：工具中立的 Skill 目录，包含 `SKILL.md`、README 和 references。
 - `workflows/`：确定性工作流脚本、schema 和示例输出。
 - `adapters/`：Codex 和 Claude Code 的安装器与卸载器。
+- `distribution/`：经过审阅的用户级和项目级分发 manifest 示例。
 - `docs/`：架构、分发、兼容性、安全、图表和编写手册。
 - `tests/`：PowerShell 和 Bash 版本的结构、Skill、workflow 和 manifest 校验器。
+- `tools/`：基于配置的 manifest 发现和安装计划工具。
 
 ## 安全边界
 
 脚本不得默认执行破坏性操作。数据库写入、生产配置、commit/push、删除、外部发布和 DMS 执行都需要人工确认。安装前请审阅 Skills，尤其是在安装到多个项目共享的用户级目录时。
+
+公开发布必须包含 `SECURITY.md` 和 `SUPPORT.md`，并且打 tag 前应以 public 模式运行 `release-check`（`-Public` 或 `--public`）。
 
 ## 跨平台支持摘要
 

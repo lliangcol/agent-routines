@@ -15,7 +15,8 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      # Pinned from actions/checkout@v4.
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -33,6 +34,8 @@ jobs:
         run: ./tests/validate-changelog.sh
       - name: validate-manifest
         run: ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
+      - name: validate-install-discovery-config
+        run: ./tests/validate-install-discovery-config.sh --config-path ./tools/install-discovery.config.example.json
       - name: run-workflows (smoke)
         run: ./tests/run-workflows.sh
 
@@ -40,7 +43,8 @@ jobs:
     name: PowerShell gates (Windows)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      # Pinned from actions/checkout@v4.
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -62,6 +66,9 @@ jobs:
       - name: validate-manifest (pwsh)
         shell: pwsh
         run: ./tests/validate-manifest.ps1 -ManifestPath ./distribution/agent-routines.manifest.json
+      - name: validate-install-discovery-config (pwsh)
+        shell: pwsh
+        run: ./tests/validate-install-discovery-config.ps1 -ConfigPath ./tools/install-discovery.config.example.json
       - name: run-workflows smoke (pwsh)
         shell: pwsh
         run: ./tests/run-workflows.ps1
@@ -83,6 +90,9 @@ jobs:
       - name: validate-manifest (Windows PowerShell 5.1)
         shell: powershell
         run: ./tests/validate-manifest.ps1 -ManifestPath ./distribution/agent-routines.manifest.json
+      - name: validate-install-discovery-config (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./tests/validate-install-discovery-config.ps1 -ConfigPath ./tools/install-discovery.config.example.json
       - name: run-workflows smoke (Windows PowerShell 5.1)
         shell: powershell
         run: ./tests/run-workflows.ps1
@@ -91,9 +101,11 @@ jobs:
     name: Secret scan (gitleaks)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # Pinned from actions/checkout@v4.
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
+      # Pinned from gitleaks/gitleaks-action@v2.
+      - uses: gitleaks/gitleaks-action@dcedce43c6f43de0b836d1fe38946645c9c638dc
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

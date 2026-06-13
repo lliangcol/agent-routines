@@ -4,11 +4,12 @@ param(
     [string]$Tool,
     [string]$ManifestPath = '',
     [switch]$Force,
+    [switch]$WhatIf,
     [switch]$Help
 )
 
 if ($Help) {
-    Write-Host 'Usage: install-manifest.ps1 -Tool codex|claude-code -ManifestPath <path> [-Force]'
+    Write-Host 'Usage: install-manifest.ps1 -Tool codex|claude-code -ManifestPath <path> [-Force] [-WhatIf]'
     exit 0
 }
 
@@ -27,6 +28,7 @@ $UserSkillTargetRoot = if ($Tool -eq 'codex') { Join-Path $HOME '.codex\skills' 
 $UserWorkflowTargetRoot = Join-Path $HOME '.agent-routines\workflows'
 $installed = @()
 $skipped = @()
+$planned = @()
 $entries = @()
 $errors = @()
 
@@ -80,11 +82,19 @@ function Add-ManifestEntries {
 
 function Copy-DirectorySafe {
     param([string]$Source, [string]$Target)
+    $action = 'install'
     if (Test-Path -LiteralPath $Target) {
         if (-not $Force) {
             $script:skipped += "exists:$Target"
             return
         }
+        $action = 'replace'
+    }
+    if ($WhatIf) {
+        $script:planned += "${action}:$Target"
+        return
+    }
+    if (Test-Path -LiteralPath $Target) {
         Remove-Item -LiteralPath $Target -Recurse -Force
     }
     $parent = Split-Path -Parent $Target
@@ -130,5 +140,7 @@ foreach ($entry in $entries) {
 
 Write-Host 'Manifest install summary'
 Write-Host ("Tool: $Tool")
+Write-Host ('Dry run: ' + $WhatIf.IsPresent)
+Write-Host ('Planned: ' + (($planned -join '; ')))
 Write-Host ('Installed: ' + (($installed -join '; ')))
 Write-Host ('Skipped: ' + (($skipped -join '; ')))

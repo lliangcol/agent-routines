@@ -6,13 +6,13 @@
   "checks": [
     {
       "name": "command:codebase-memory-mcp",
-      "ok": false,
-      "details": "Command not found."
+      "ok": true,
+      "details": "/usr/local/bin/codebase-memory-mcp"
     },
     {
       "name": "graph-first-instructions",
-      "ok": false,
-      "details": "No graph-first repo instruction file found."
+      "ok": true,
+      "details": "AGENTS.md"
     }
   ],
   "warnings": [

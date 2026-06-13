@@ -3,14 +3,16 @@
 ## Purpose
 Aggregate documentation checks and optional safe custom commands while reporting missing runtimes instead of assuming Python exists.
 
+Custom commands pass three best-effort filters before execution: shell control characters (`;`, `&`, `|`, `<`, `>`, backticks, `$(`, newlines) are rejected; destructive keywords (`rm`, `drop`, `update`, `--output`, ...) are rejected; the first token must be on a readonly allowlist (`git` with readonly subcommands such as `status`/`log`/`diff`/`show`, plus `ls`, `cat`, `head`, `tail`, `grep`, and similar). This screening is best-effort, not a security boundary; the caller remains responsible for passing readonly commands.
+
 ## Supported OS
 
 Windows 10/11 with Windows PowerShell 5.1 or PowerShell 7+, macOS with Bash or PowerShell 7+, and Linux with Bash or PowerShell 7+.
 
 ## Parameters
 
-- PowerShell: `-Path`, `-CustomCommand`, `-Sql`, `-SqlFile`, `-Help` where applicable.
-- Bash: `--path`, `--custom-command`, `--sql`, `--sql-file`, `--help` where applicable.
+- PowerShell: `-Path`, `-CustomCommand`, `-Help`.
+- Bash: `--path`, `--custom-command`, `--help`.
 
 ## JSON Schema Summary
 

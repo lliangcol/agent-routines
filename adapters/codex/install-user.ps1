@@ -4,11 +4,12 @@ param(
     [switch]$SkipWorkflows,
     [switch]$WorkflowsOnly,
     [switch]$Force,
+    [switch]$WhatIf,
     [switch]$Help
 )
 
 if ($Help) {
-    Write-Host 'Usage: install script [-SkillName <name>] [-SkipWorkflows] [-WorkflowsOnly] [-Force]'
+    Write-Host 'Usage: install script [-SkillName <name>] [-SkipWorkflows] [-WorkflowsOnly] [-Force] [-WhatIf]'
     exit 0
 }
 
@@ -26,15 +27,24 @@ $SkillTargetRoot = Join-Path $HOME '.codex\skills'
 $WorkflowTargetRoot = Join-Path $HOME '.agent-routines\workflows'
 $installed = @()
 $skipped = @()
+$planned = @()
 
 function Copy-DirectorySafe {
     param([string]$Source, [string]$Target)
     if (-not (Test-Path -LiteralPath $Source)) { throw "Source not found: $Source" }
+    $action = 'install'
     if (Test-Path -LiteralPath $Target) {
         if (-not $Force) {
             $script:skipped += "exists:$Target"
             return
         }
+        $action = 'replace'
+    }
+    if ($WhatIf) {
+        $script:planned += "${action}:$Target"
+        return
+    }
+    if (Test-Path -LiteralPath $Target) {
         Remove-Item -LiteralPath $Target -Recurse -Force
     }
     $parent = Split-Path -Parent $Target
@@ -55,5 +65,7 @@ if (-not $SkipWorkflows) {
 }
 
 Write-Host 'Install summary'
+Write-Host ('Dry run: ' + $WhatIf.IsPresent)
+Write-Host ('Planned: ' + (($planned -join '; ')))
 Write-Host ('Installed: ' + (($installed -join '; ')))
 Write-Host ('Skipped: ' + (($skipped -join '; ')))

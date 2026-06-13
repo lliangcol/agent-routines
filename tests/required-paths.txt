@@ -9,6 +9,11 @@ CHANGELOG.md
 CONTRIBUTING.md
 LICENSE
 README.md
+README.zh-CN.md
+SECURITY.md
+SECURITY.zh-CN.md
+SUPPORT.md
+SUPPORT.zh-CN.md
 adapters/claude-code/check-project.ps1
 adapters/claude-code/check-project.sh
 adapters/claude-code/check-user.ps1
@@ -56,6 +61,8 @@ docs/distribution.md
 docs/distribution.zh-CN.md
 docs/examples.md
 docs/examples.zh-CN.md
+docs/install-discovery.md
+docs/install-discovery.zh-CN.md
 docs/naming.md
 docs/naming.zh-CN.md
 docs/release-process.md
@@ -94,6 +101,8 @@ tests/validate-changelog.ps1
 tests/validate-changelog.sh
 tests/validate-docs.ps1
 tests/validate-docs.sh
+tests/validate-install-discovery-config.ps1
+tests/validate-install-discovery-config.sh
 tests/validate-manifest.ps1
 tests/validate-manifest.sh
 tests/validate-skills.ps1
@@ -102,6 +111,9 @@ tests/validate-structure.ps1
 tests/validate-structure.sh
 tests/validate-workflows.ps1
 tests/validate-workflows.sh
+tools/generate-install-manifest.ps1
+tools/generate-install-manifest.sh
+tools/install-discovery.config.example.json
 workflows/archive-check/archive-check.ps1
 workflows/archive-check/archive-check.sh
 workflows/archive-check/examples/sample-output.json

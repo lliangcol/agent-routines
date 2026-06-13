@@ -8,9 +8,13 @@
 
 判断密集型工作使用 Skills。需要稳定 JSON 和可重复检查时使用 workflows。
 
+代码发现时，如果本仓库已经被 codebase-memory-mcp 索引，应优先使用 graph 工具。如果 graph 不可用或结果不足，则回退到 `rg` 或直接阅读文件，并在结果中说明回退原因。不要把 graph 输出视为生成型事实来源；维护事实来源仍然是本仓库中的文件。
+
 完整清单见 [例行能力清单](catalog.zh-CN.md)。提示词和命令示例见 [例行能力使用示例](examples.zh-CN.md)。
 
 跨项目复用时，可以在用户级安装 manifest 中的通用 Skills：guarded-change、review-loop、merge-fix、env-audit、runtime-repair、commit-guard、prompt-qa、release-guard、security-review、github-guard 和 graph-audit。项目特定行为应在审阅目标仓库规则后再安装到项目级。
+
+大范围安装或重新安装前，应先运行安装器 dry-run 并审阅目标清单。PowerShell 安装器使用 `-WhatIf`；Bash 安装器使用 `--dry-run`。Dry-run 模式不得创建目标目录、复制文件、删除文件或替换已安装内容。
 
 改动前可以用领域 workflows 做只读探测：
 

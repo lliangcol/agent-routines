@@ -10,6 +10,16 @@
       "details": "Release surface path probe."
     },
     {
+      "name": "release-path:SECURITY.md",
+      "ok": true,
+      "details": "Release surface path probe."
+    },
+    {
+      "name": "release-path:SUPPORT.md",
+      "ok": true,
+      "details": "Release surface path probe."
+    },
+    {
       "name": "release-path:package.json",
       "ok": false,
       "details": "Release surface path probe."
