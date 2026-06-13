@@ -7,6 +7,7 @@
 - Added config-driven install discovery with dry-run manifest generation, reviewed config validation, and CI coverage for the example config.
 - Persisted graph-first code discovery guidance in `AGENTS.md` and documentation without adding a repo-local `.mcp.json`.
 - Strengthened workflow and manifest validators for schema/sample drift and duplicate names inside manifest blocks.
+- Refined release/security checks so public release mode reports only real blockers and nested dependency/build output directories are skipped during local secret scans.
 - Added installer dry-run support (`-WhatIf` for PowerShell, `--dry-run` for Bash) across user, project, and manifest install entrypoints.
 - Pinned GitHub Actions dependencies to commit SHAs while documenting the upstream tags.
 

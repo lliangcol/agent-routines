@@ -52,7 +52,7 @@ try {
     $high = @()
     $manual = @()
     $files = Get-ChildItem -LiteralPath (Get-Location) -File -Recurse -ErrorAction SilentlyContinue | Where-Object {
-        $_.FullName -notmatch '[\\/](\.git|node_modules|target|dist|build|__pycache__)([\\/]|$)' -and $_.Length -lt 1048576
+        $_.FullName -notmatch '[\\/](\.git|node_modules|target|dist|build|out|release|coverage|tmp|temp|\.tmp|\.cache|__pycache__)([\\/]|$)' -and $_.Length -lt 1048576
     }
     foreach ($file in $files) {
         $relative = Get-RelativeDisplayPath -Root (Get-Location).Path -File $file.FullName

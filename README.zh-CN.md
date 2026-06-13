@@ -126,7 +126,7 @@ Manifest 模式只复制清单中列出的 Skill 和 workflow 目录。它不会
 
 ## 已包含例行能力
 
-本仓库包含用于受控改动、已验证提交、提示词 QA、review 循环、merge 修复、API 同步、DMS 修复、支付文档、环境审计、运行时修复、Maven 验证、治理审计、归档记录、Node 工作区发布、公开发布就绪、安全审查、GitHub 策略规划、graph 审计和知识漂移检查的 Skills。
+本仓库包含用于受控改动、已验证提交、提示词 QA、review 循环、merge 修复、API 同步、DMS 修复、支付文档、环境审计、运行时修复、Maven 验证、治理审计、归档记录、Node 工作区发布、Electron 应用构建、桌面打包、桌面 QA、桌面设计系统、i18n 检查、公开发布就绪、安全审查、GitHub 策略规划、graph 审计和知识漂移检查的 Skills。
 
 workflow 运行时包含针对 preflight 状态、门禁、提交、发布、安全发现、GitHub workflow 证据、graph 就绪、merge、归档、数据库 SQL 形态、文档、运行时、Maven、治理状态、Node 工作区、知识漂移和 Windows 启动项的只读检查。
 
@@ -136,7 +136,7 @@ workflow 运行时包含针对 preflight 状态、门禁、提交、发布、安
 - `workflows/`：确定性工作流脚本、schema 和示例输出。
 - `adapters/`：Codex 和 Claude Code 的安装器与卸载器。
 - `distribution/`：经过审阅的用户级和项目级分发 manifest 示例。
-- `docs/`：架构、分发、兼容性、安全、图表和编写手册。
+- `docs/`：架构、分发、兼容性、安全、图表、编写手册、Electron 应用执行规范、UI 设计契约、提前安装清单和发布流程。
 - `tests/`：PowerShell 和 Bash 版本的结构、Skill、workflow 和 manifest 校验器。
 - `tools/`：基于配置的 manifest 发现和安装计划工具。
 

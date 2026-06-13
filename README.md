@@ -130,7 +130,7 @@ After installing, verify the integrity of installed Skills and workflows against
 
 ## Included Routines
 
-The repository includes Skills for guarded changes, validated commits, prompt QA, review loops, merge fixes, API sync, DMS repair, payment docs, environment audits, runtime repair, Maven verification, governance audits, archive records, Node workspace releases, public release readiness, security review, GitHub policy planning, graph audits, and knowledge drift checks.
+The repository includes Skills for guarded changes, validated commits, prompt QA, review loops, merge fixes, API sync, DMS repair, payment docs, environment audits, runtime repair, Maven verification, governance audits, archive records, Node workspace releases, Electron app building, desktop packaging, desktop QA, desktop design systems, i18n checks, public release readiness, security review, GitHub policy planning, graph audits, and knowledge drift checks.
 
 The workflow runtime includes readonly checks for preflight state, gates, commits, releases, security findings, GitHub workflow evidence, graph readiness, merges, archives, database SQL shape, docs, runtime setup, Maven setup, governance state, Node workspaces, knowledge drift, and Windows startup sources.
 
@@ -140,7 +140,7 @@ The workflow runtime includes readonly checks for preflight state, gates, commit
 - `workflows/`: deterministic workflow scripts, schemas, and sample outputs.
 - `adapters/`: Codex and Claude Code installers and uninstallers.
 - `distribution/`: manifest examples for reviewed user-level and project-level distribution.
-- `docs/`: architecture, distribution, compatibility, security, diagrams, authoring manuals, and the release process.
+- `docs/`: architecture, distribution, compatibility, security, diagrams, authoring manuals, the Electron app execution plan, UI design contract, prerequisite plan, and the release process.
 - `tests/`: structure, Skill, workflow, docs, and manifest validators plus workflow smoke tests, for PowerShell and Bash.
 - `tools/`: config-driven utilities for manifest discovery and installation planning.
 - `executions/`: durable evidence packs for significant operations, following the archive-record layout.

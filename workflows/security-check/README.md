@@ -4,6 +4,8 @@
 
 Scan local files for high-confidence secret-like patterns and manual-review private path signals without printing sensitive values, deleting files, rotating credentials, rewriting history, or publishing results.
 
+Generated dependency and build directories such as nested `node_modules`, `dist`, `build`, `out`, `release`, `coverage`, temporary caches, and `__pycache__` are skipped.
+
 ## Supported OS
 
 Windows 10/11 with Windows PowerShell 5.1 or PowerShell 7+, macOS with Bash or PowerShell 7+, and Linux with Bash or PowerShell 7+.

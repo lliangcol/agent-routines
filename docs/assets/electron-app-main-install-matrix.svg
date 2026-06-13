@@ -1,0 +1,434 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Agent Routines Manager optimized Install Matrix design mockup</title>
+  <desc id="desc">Optimized desktop Electron app UI showing a native window frame, navigation, command bar, install matrix, gated write actions, detail drawer, legend, and status bar.</desc>
+  <defs>
+    <filter id="window-shadow" x="-6%" y="-6%" width="112%" height="112%">
+      <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#1d2430" flood-opacity="0.16"/>
+    </filter>
+    <filter id="surface-shadow" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#1d2430" flood-opacity="0.08"/>
+    </filter>
+    <style>
+      .canvas { fill: #eef1f4; }
+      .window { fill: #ffffff; }
+      .panel { fill: #ffffff; }
+      .panel-muted { fill: #fbfcfd; }
+      .surface { fill: #f6f7f9; }
+      .surface-blue { fill: #eef5ff; }
+      .surface-yellow { fill: #fff8e5; }
+      .surface-red { fill: #fff1f0; }
+      .line { stroke: #d7dde5; stroke-width: 1; }
+      .line-strong { stroke: #c9d1dc; stroke-width: 1; }
+      .focus { stroke: #2764c5; stroke-width: 2; fill: none; }
+      .text { fill: #1d2430; font-family: "Segoe UI", "Inter", "Noto Sans", Arial, sans-serif; letter-spacing: 0; }
+      .muted { fill: #5a6675; font-family: "Segoe UI", "Inter", "Noto Sans", Arial, sans-serif; letter-spacing: 0; }
+      .mono { fill: #2f3742; font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace; letter-spacing: 0; }
+      .title-text { font-size: 21px; font-weight: 600; }
+      .section-text { font-size: 15px; font-weight: 600; }
+      .body-text { font-size: 13px; font-weight: 400; }
+      .nav-text { font-size: 14px; font-weight: 500; }
+      .small-text { font-size: 12px; font-weight: 400; }
+      .tiny-text { font-size: 11px; font-weight: 400; }
+      .btn { fill: #ffffff; stroke: #c9d1dc; stroke-width: 1; }
+      .btn-muted { fill: #f6f7f9; stroke: #c9d1dc; stroke-width: 1; }
+      .btn-primary { fill: #2764c5; }
+      .btn-danger { fill: #b42318; }
+      .btn-disabled { fill: #eef1f4; stroke: #d7dde5; stroke-width: 1; }
+      .button-text { fill: #1d2430; font-family: "Segoe UI", "Inter", "Noto Sans", Arial, sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0; }
+      .button-primary-text { fill: #ffffff; font-family: "Segoe UI", "Inter", "Noto Sans", Arial, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0; }
+      .button-disabled-text { fill: #6b7280; font-family: "Segoe UI", "Inter", "Noto Sans", Arial, sans-serif; font-size: 13px; letter-spacing: 0; }
+      .accent { fill: #2764c5; }
+      .ok { fill: #1f7a4d; }
+      .warning { fill: #d99700; }
+      .warning-deep { fill: #9a6200; }
+      .error { fill: #d92d20; }
+      .neutral { fill: #6b7280; }
+      .chip { fill: #eef1f4; stroke: #d7dde5; stroke-width: 1; }
+      .icon-line { fill: none; stroke: #1d2430; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+      .icon-muted { fill: none; stroke: #5a6675; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+      .icon-accent { fill: none; stroke: #2764c5; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+      .icon-white { fill: none; stroke: #ffffff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+      .icon-status { fill: none; stroke: #ffffff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+    <symbol id="i-dashboard" viewBox="0 0 24 24">
+      <path d="M4 13a8 8 0 0 1 16 0"/>
+      <path d="M12 13l4-5"/>
+      <path d="M6 17h12"/>
+    </symbol>
+    <symbol id="i-boxes" viewBox="0 0 24 24">
+      <path d="M4 8l8-4 8 4-8 4-8-4z"/>
+      <path d="M4 8v8l8 4 8-4V8"/>
+      <path d="M12 12v8"/>
+    </symbol>
+    <symbol id="i-table" viewBox="0 0 24 24">
+      <rect x="4" y="4" width="16" height="16" rx="2"/>
+      <path d="M4 10h16M10 4v16M16 4v16"/>
+    </symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24">
+      <path d="M3 7h7l2 3h9v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24">
+      <path d="M12 3l8 3v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6l8-3z"/>
+      <path d="M12 8v7M9 12h6"/>
+    </symbol>
+    <symbol id="i-send" viewBox="0 0 24 24">
+      <path d="M4 20l16-8L4 4v7l9 1-9 1v7z"/>
+    </symbol>
+    <symbol id="i-checks" viewBox="0 0 24 24">
+      <path d="M5 7l3 3 5-5"/>
+      <path d="M5 15l3 3 5-5"/>
+      <path d="M15 17h4"/>
+      <path d="M15 9h4"/>
+    </symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24">
+      <rect x="4" y="5" width="16" height="14" rx="2"/>
+      <path d="M7 9l3 3-3 3"/>
+      <path d="M12 15h5"/>
+    </symbol>
+    <symbol id="i-file" viewBox="0 0 24 24">
+      <path d="M6 3h9l3 3v15H6V3z"/>
+      <path d="M14 3v4h4"/>
+      <path d="M9 11h6M9 15h6"/>
+    </symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a7 7 0 0 0-1.8-1L14.4 3h-4.8L9.3 6a7 7 0 0 0-1.8 1l-2.4-1-2 3.4 2 1.5A7 7 0 0 0 5 12a7 7 0 0 0 .1 1l-2 1.5 2 3.4 2.4-1a7 7 0 0 0 1.8 1l.3 3h4.8l.3-3a7 7 0 0 0 1.8-1l2.4 1 2-3.4-2-1.5a7 7 0 0 0 .1-1z"/>
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="6"/>
+      <path d="M16 16l4 4"/>
+    </symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24">
+      <path d="M20 12a8 8 0 1 1-2.3-5.7"/>
+      <path d="M20 5v7h-7"/>
+    </symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24">
+      <path d="M4 20l10-10"/>
+      <path d="M13 4l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z"/>
+      <path d="M19 13l.6 1.6L21 15l-1.4.4L19 17l-.6-1.6L17 15l1.4-.4L19 13z"/>
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24">
+      <path d="M12 4v11"/>
+      <path d="M8 11l4 4 4-4"/>
+      <path d="M5 20h14"/>
+    </symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24">
+      <path d="M4 5h16l-6 7v5l-4 2v-7L4 5z"/>
+    </symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24">
+      <path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24">
+      <rect x="8" y="8" width="11" height="11" rx="2"/>
+      <rect x="5" y="5" width="11" height="11" rx="2"/>
+    </symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24">
+      <path d="M9 6l6 6-6 6"/>
+    </symbol>
+    <symbol id="i-users" viewBox="0 0 24 24">
+      <circle cx="9" cy="8" r="3"/>
+      <circle cx="16" cy="10" r="2.5"/>
+      <path d="M3 19a6 6 0 0 1 12 0"/>
+      <path d="M14 19a5 5 0 0 1 7 0"/>
+    </symbol>
+    <symbol id="s-check" viewBox="0 0 16 16">
+      <path d="M4 8.3l2.3 2.3L12 5"/>
+    </symbol>
+    <symbol id="s-x" viewBox="0 0 16 16">
+      <path d="M5 5l6 6M11 5l-6 6"/>
+    </symbol>
+    <symbol id="s-warn" viewBox="0 0 18 18">
+      <path d="M9 3l7 12H2L9 3z"/>
+      <path d="M9 7v4M9 14h.01"/>
+    </symbol>
+  </defs>
+
+  <rect class="canvas" x="0" y="0" width="1600" height="1000"/>
+
+  <rect class="window" x="32" y="24" width="1536" height="944" rx="8" filter="url(#window-shadow)"/>
+  <rect class="panel-muted" x="32" y="24" width="1536" height="48" rx="8"/>
+  <line class="line" x1="32" y1="72" x2="1568" y2="72"/>
+  <rect x="32" y="64" width="1536" height="8" fill="#fbfcfd"/>
+
+  <g transform="translate(56 38)">
+    <rect x="0" y="0" width="20" height="20" rx="4" fill="#2764c5"/>
+    <path d="M6 6h8v8H6z" fill="#ffffff" opacity="0.95"/>
+    <path d="M10 3v14M3 10h14" stroke="#2764c5" stroke-width="1" opacity="0.24"/>
+  </g>
+  <text class="text section-text" x="88" y="55">Agent Routines Manager</text>
+  <text class="muted small-text" x="295" y="55">source-first distribution console</text>
+  <text class="muted small-text" x="1328" y="55">Windows</text>
+  <line class="line-strong" x1="1382" y1="47" x2="1394" y2="47"/>
+  <rect class="line-strong" x="1438" y="40" width="12" height="12" fill="none" rx="1"/>
+  <path class="line-strong" d="M1500 40l14 14M1514 40l-14 14"/>
+
+  <rect class="panel-muted" x="32" y="72" width="224" height="856"/>
+  <line class="line" x1="256" y1="72" x2="256" y2="928"/>
+  <text class="muted tiny-text" x="58" y="112">SOURCE REPOSITORY</text>
+  <text class="mono tiny-text" x="58" y="132">D:\...\agent-routines</text>
+  <rect class="chip" x="58" y="146" width="126" height="24" rx="12"/>
+  <circle class="ok" cx="72" cy="158" r="5"/>
+  <text class="muted tiny-text" x="84" y="162">config valid</text>
+
+  <rect x="32" y="282" width="224" height="44" fill="#e8f0fe"/>
+  <rect class="accent" x="32" y="282" width="4" height="44"/>
+  <g class="icon-muted">
+    <use href="#i-dashboard" x="55" y="194" width="20" height="20"/>
+    <use href="#i-boxes" x="55" y="246" width="20" height="20"/>
+  </g>
+  <g class="icon-accent">
+    <use href="#i-table" x="55" y="294" width="20" height="20"/>
+  </g>
+  <g class="icon-muted">
+    <use href="#i-folder" x="55" y="350" width="20" height="20"/>
+    <use href="#i-shield" x="55" y="402" width="20" height="20"/>
+    <use href="#i-send" x="55" y="454" width="20" height="20"/>
+    <use href="#i-checks" x="55" y="506" width="20" height="20"/>
+    <use href="#i-terminal" x="55" y="558" width="20" height="20"/>
+    <use href="#i-file" x="55" y="610" width="20" height="20"/>
+    <use href="#i-settings" x="55" y="662" width="20" height="20"/>
+  </g>
+  <text class="text nav-text" x="88" y="210">Dashboard</text>
+  <text class="text nav-text" x="88" y="262">Inventory</text>
+  <text class="accent nav-text" x="88" y="310">Install Matrix</text>
+  <text class="text nav-text" x="88" y="366">Projects</text>
+  <text class="text nav-text" x="88" y="418">Policy</text>
+  <text class="text nav-text" x="88" y="470">Distribute</text>
+  <text class="text nav-text" x="88" y="522">Validation</text>
+  <text class="text nav-text" x="88" y="574">Task Center</text>
+  <text class="text nav-text" x="88" y="626">Docs</text>
+  <text class="text nav-text" x="88" y="678">Settings</text>
+
+  <rect class="surface" x="58" y="800" width="172" height="86" rx="6"/>
+  <text class="text small-text" x="72" y="826">Next safe action</text>
+  <text class="muted tiny-text" x="72" y="848">Review manifest diff</text>
+  <rect class="btn" x="72" y="860" width="128" height="24" rx="4"/>
+  <text class="button-text" x="93" y="877">Open wizard</text>
+
+  <rect class="panel" x="256" y="72" width="1312" height="856"/>
+  <rect class="panel" x="256" y="72" width="1312" height="78"/>
+  <line class="line" x1="256" y1="150" x2="1568" y2="150"/>
+  <text class="text title-text" x="288" y="108">Install Matrix</text>
+  <text class="muted small-text" x="288" y="130">Source-to-target drift review for Skills and workflows</text>
+
+  <rect class="chip" x="658" y="92" width="126" height="28" rx="14"/>
+  <circle class="ok" cx="676" cy="106" r="5"/>
+  <text class="muted small-text" x="690" y="111">readonly scan</text>
+  <rect class="chip" x="796" y="92" width="124" height="28" rx="14"/>
+  <use class="icon-muted" href="#i-shield" x="812" y="98" width="16" height="16"/>
+  <text class="muted small-text" x="832" y="111">write gated</text>
+
+  <rect class="btn" x="1002" y="94" width="118" height="36" rx="4"/>
+  <use class="icon-accent" href="#i-refresh" x="1019" y="102" width="18" height="18"/>
+  <text class="button-text" x="1044" y="117">Refresh</text>
+  <rect class="btn-primary" x="1132" y="94" width="130" height="36" rx="4"/>
+  <use class="icon-white" href="#i-wand" x="1152" y="102" width="18" height="18"/>
+  <text class="button-primary-text" x="1178" y="117">Open wizard</text>
+  <rect class="btn" x="1274" y="94" width="104" height="36" rx="4"/>
+  <use class="icon-accent" href="#i-download" x="1292" y="102" width="18" height="18"/>
+  <text class="button-text" x="1318" y="117">Export</text>
+  <rect class="btn" x="1390" y="94" width="112" height="36" rx="4"/>
+  <use class="icon-muted" href="#i-filter" x="1408" y="102" width="18" height="18"/>
+  <text class="button-text" x="1434" y="117">Filters</text>
+
+  <rect class="panel" x="288" y="170" width="870" height="42" rx="6" filter="url(#surface-shadow)"/>
+  <rect class="btn" x="302" y="178" width="142" height="28" rx="4"/>
+  <text class="button-text" x="316" y="197">All routines</text>
+  <path class="icon-muted" d="M426 189l5 5 5-5"/>
+  <rect class="btn" x="456" y="178" width="112" height="28" rx="4"/>
+  <text class="button-text" x="470" y="197">All tools</text>
+  <path class="icon-muted" d="M550 189l5 5 5-5"/>
+  <rect class="btn" x="580" y="178" width="120" height="28" rx="4"/>
+  <text class="button-text" x="594" y="197">All status</text>
+  <path class="icon-muted" d="M682 189l5 5 5-5"/>
+  <rect class="btn" x="712" y="178" width="264" height="28" rx="4"/>
+  <use class="icon-muted" href="#i-search" x="728" y="183" width="16" height="16"/>
+  <text class="muted small-text" x="750" y="197">Search routines or targets...</text>
+  <use class="icon-accent" href="#i-eye" x="1000" y="181" width="20" height="20"/>
+  <text class="accent small-text" x="1028" y="197">View options</text>
+  <text class="muted small-text" x="1116" y="197">35 cells</text>
+
+  <rect class="panel" x="288" y="232" width="870" height="548" rx="6" filter="url(#surface-shadow)"/>
+  <rect class="panel-muted" x="288" y="232" width="870" height="58" rx="6"/>
+  <line class="line" x1="288" y1="290" x2="1158" y2="290"/>
+  <line class="line" x1="478" y1="232" x2="478" y2="780"/>
+  <line class="line" x1="614" y1="232" x2="614" y2="780"/>
+  <line class="line" x1="750" y1="232" x2="750" y2="780"/>
+  <line class="line" x1="886" y1="232" x2="886" y2="780"/>
+  <line class="line" x1="1022" y1="232" x2="1022" y2="780"/>
+
+  <text class="text section-text" x="306" y="263">Routine</text>
+  <text class="text body-text" x="496" y="254">Codex user</text>
+  <text class="muted tiny-text" x="496" y="274">~/.codex</text>
+  <text class="text body-text" x="632" y="254">Codex project</text>
+  <text class="muted tiny-text" x="632" y="274">.codex</text>
+  <text class="text body-text" x="768" y="254">Claude user</text>
+  <text class="muted tiny-text" x="768" y="274">~/.claude</text>
+  <text class="text body-text" x="904" y="254">Claude project</text>
+  <text class="muted tiny-text" x="904" y="274">.claude</text>
+  <text class="text body-text" x="1040" y="254">Workflow rt</text>
+  <text class="muted tiny-text" x="1040" y="274">shared</text>
+
+  <line class="line" x1="288" y1="354" x2="1158" y2="354"/>
+  <rect x="288" y="354" width="870" height="64" fill="#eef5ff"/>
+  <line class="line" x1="288" y1="418" x2="1158" y2="418"/>
+  <line class="line" x1="288" y1="482" x2="1158" y2="482"/>
+  <line class="line" x1="288" y1="546" x2="1158" y2="546"/>
+  <line class="line" x1="288" y1="610" x2="1158" y2="610"/>
+  <line class="line" x1="288" y1="674" x2="1158" y2="674"/>
+  <line class="line" x1="288" y1="738" x2="1158" y2="738"/>
+
+  <text class="accent body-text" x="306" y="329">electron-app-builder</text>
+  <text class="accent body-text" x="306" y="393">desktop-design-system</text>
+  <text class="accent body-text" x="306" y="457">desktop-qa</text>
+  <text class="accent body-text" x="306" y="521">i18n-checklist</text>
+  <text class="accent body-text" x="306" y="585">node-workspace-check</text>
+  <text class="accent body-text" x="306" y="649">runtime-check</text>
+  <text class="accent body-text" x="306" y="713">security-review</text>
+  <text class="muted tiny-text" x="306" y="344">skill</text>
+  <text class="muted tiny-text" x="306" y="408">skill</text>
+  <text class="muted tiny-text" x="306" y="472">skill</text>
+  <text class="muted tiny-text" x="306" y="536">skill</text>
+  <text class="muted tiny-text" x="306" y="600">workflow</text>
+  <text class="muted tiny-text" x="306" y="664">workflow</text>
+  <text class="muted tiny-text" x="306" y="728">skill</text>
+
+  <g class="body-text">
+    <g transform="translate(496 312)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(632 312)"><circle class="error" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-x" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">missing</text></g>
+    <g transform="translate(768 312)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(904 312)"><circle class="error" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-x" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">missing</text></g>
+    <g transform="translate(1040 312)"><use class="icon-muted" href="#i-users" x="0" y="0" width="18" height="18"/><text class="text" x="28" y="14">shared</text></g>
+
+    <g transform="translate(496 376)"><use class="warning" href="#s-warn" x="0" y="0" width="18" height="18"/><text class="text" x="28" y="14">drift</text></g>
+    <g transform="translate(632 376)"><circle class="error" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-x" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">missing</text></g>
+    <g transform="translate(768 376)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(904 376)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(1040 376)"><use class="icon-muted" href="#i-users" x="0" y="0" width="18" height="18"/><text class="text" x="28" y="14">shared</text></g>
+
+    <g transform="translate(496 440)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(632 440)"><circle class="error" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-x" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">missing</text></g>
+    <g transform="translate(768 440)"><use class="warning" href="#s-warn" x="0" y="0" width="18" height="18"/><text class="text" x="28" y="14">drift</text></g>
+    <g transform="translate(904 440)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(1040 440)"><use class="icon-muted" href="#i-users" x="0" y="0" width="18" height="18"/><text class="text" x="28" y="14">shared</text></g>
+
+    <g transform="translate(496 504)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(632 504)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(768 504)"><circle class="error" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-x" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">missing</text></g>
+    <g transform="translate(904 504)"><circle class="error" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-x" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">missing</text></g>
+    <g transform="translate(1040 504)"><use class="icon-muted" href="#i-users" x="0" y="0" width="18" height="18"/><text class="text" x="28" y="14">shared</text></g>
+
+    <g transform="translate(496 568)"><use class="icon-muted" href="#i-users" x="0" y="0" width="18" height="18"/><text class="text" x="28" y="14">shared</text></g>
+    <g transform="translate(632 568)"><use class="icon-muted" href="#i-users" x="0" y="0" width="18" height="18"/><text class="text" x="28" y="14">shared</text></g>
+    <g transform="translate(768 568)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(904 568)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(1040 568)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+
+    <g transform="translate(496 632)"><use class="warning" href="#s-warn" x="0" y="0" width="18" height="18"/><text class="text" x="28" y="14">drift</text></g>
+    <g transform="translate(632 632)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(768 632)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(904 632)"><circle class="error" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-x" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">missing</text></g>
+    <g transform="translate(1040 632)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+
+    <g transform="translate(496 696)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(632 696)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(768 696)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text" x="28" y="14">same</text></g>
+    <g transform="translate(904 696)"><use class="warning" href="#s-warn" x="0" y="0" width="18" height="18"/><text class="text" x="28" y="14">drift</text></g>
+    <g transform="translate(1040 696)"><use class="icon-muted" href="#i-users" x="0" y="0" width="18" height="18"/><text class="text" x="28" y="14">shared</text></g>
+  </g>
+
+  <rect class="panel" x="288" y="806" width="870" height="54" rx="6" filter="url(#surface-shadow)"/>
+  <g transform="translate(312 824)">
+    <circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/>
+    <text class="text body-text" x="28" y="14">same 17</text>
+  </g>
+  <g transform="translate(414 824)">
+    <use class="warning" href="#s-warn" x="0" y="0" width="18" height="18"/>
+    <text class="text body-text" x="28" y="14">drift 4</text>
+  </g>
+  <g transform="translate(510 824)">
+    <circle class="error" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-x" x="1" y="1" width="16" height="16"/>
+    <text class="text body-text" x="28" y="14">missing 7</text>
+  </g>
+  <g transform="translate(628 824)">
+    <use class="icon-muted" href="#i-users" x="0" y="0" width="18" height="18"/>
+    <text class="text body-text" x="28" y="14">shared 7</text>
+  </g>
+  <text class="muted body-text" x="780" y="839">Total cells 35</text>
+  <text class="muted body-text" x="924" y="839">Readonly scan completed</text>
+
+  <rect class="panel" x="1190" y="150" width="378" height="778"/>
+  <line class="line" x1="1190" y1="150" x2="1190" y2="928"/>
+  <text class="accent title-text" x="1222" y="198">desktop-design-system</text>
+  <text class="muted small-text" x="1222" y="224">Selected matrix cell details</text>
+  <path class="icon-muted" d="M1532 190l12 12M1544 190l-12 12"/>
+  <circle class="neutral" cx="1510" cy="196" r="2"/>
+  <circle class="neutral" cx="1510" cy="202" r="2"/>
+  <circle class="neutral" cx="1510" cy="208" r="2"/>
+
+  <rect class="surface-blue" x="1222" y="246" width="314" height="82" rx="6"/>
+  <text class="text section-text" x="1242" y="274">Write safety</text>
+  <text class="muted small-text" x="1242" y="298">Plan generation is dry-run only.</text>
+  <text class="muted small-text" x="1242" y="316">Apply remains disabled until review passes.</text>
+
+  <text class="text section-text" x="1222" y="366">Target status</text>
+  <line class="line" x1="1222" y1="384" x2="1536" y2="384"/>
+
+  <text class="text body-text" x="1222" y="422">Codex user</text>
+  <text class="muted small-text" x="1305" y="422">~/.codex</text>
+  <g transform="translate(1430 406)"><use class="warning" href="#s-warn" x="0" y="0" width="18" height="18"/><text class="text body-text" x="28" y="14">drift</text></g>
+  <use class="icon-muted" href="#i-chevron" x="1518" y="410" width="16" height="16"/>
+
+  <text class="text body-text" x="1222" y="470">Codex project</text>
+  <text class="muted small-text" x="1320" y="470">.codex</text>
+  <g transform="translate(1430 454)"><circle class="error" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-x" x="1" y="1" width="16" height="16"/><text class="text body-text" x="28" y="14">missing</text></g>
+  <use class="icon-muted" href="#i-chevron" x="1518" y="458" width="16" height="16"/>
+
+  <text class="text body-text" x="1222" y="518">Claude user</text>
+  <text class="muted small-text" x="1310" y="518">~/.claude</text>
+  <g transform="translate(1430 502)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text body-text" x="28" y="14">same</text></g>
+  <use class="icon-muted" href="#i-chevron" x="1518" y="506" width="16" height="16"/>
+
+  <text class="text body-text" x="1222" y="566">Claude project</text>
+  <text class="muted small-text" x="1326" y="566">.claude</text>
+  <g transform="translate(1430 550)"><circle class="ok" cx="9" cy="9" r="9"/><use class="icon-status" href="#s-check" x="1" y="1" width="16" height="16"/><text class="text body-text" x="28" y="14">same</text></g>
+  <use class="icon-muted" href="#i-chevron" x="1518" y="554" width="16" height="16"/>
+
+  <text class="text body-text" x="1222" y="614">Workflow runtime</text>
+  <text class="muted small-text" x="1348" y="614">shared</text>
+  <g transform="translate(1430 598)"><use class="icon-muted" href="#i-users" x="0" y="0" width="18" height="18"/><text class="text body-text" x="28" y="14">shared</text></g>
+  <use class="icon-muted" href="#i-chevron" x="1518" y="602" width="16" height="16"/>
+
+  <text class="text section-text" x="1222" y="672">Details</text>
+  <line class="line" x1="1222" y1="690" x2="1536" y2="690"/>
+  <text class="muted small-text" x="1222" y="724">Source path</text>
+  <text class="mono small-text" x="1310" y="724">skills\desktop-design-system</text>
+  <use class="icon-muted" href="#i-copy" x="1518" y="709" width="16" height="16"/>
+  <text class="muted small-text" x="1222" y="762">Changed files</text>
+  <text class="mono small-text" x="1310" y="762">SKILL.md, README.md</text>
+  <text class="muted small-text" x="1222" y="800">Recommended</text>
+  <text class="text small-text" x="1310" y="800">doc-check, gate-check</text>
+
+  <rect class="btn" x="1222" y="852" width="140" height="36" rx="4"/>
+  <text class="button-text" x="1252" y="875">Open source</text>
+  <rect class="btn-primary" x="1376" y="852" width="160" height="36" rx="4"/>
+  <text class="button-primary-text" x="1400" y="875">Generate plan</text>
+  <rect class="btn-disabled" x="1222" y="900" width="314" height="0" rx="0"/>
+
+  <rect class="panel-muted" x="32" y="928" width="1536" height="40"/>
+  <line class="line" x1="32" y1="928" x2="1568" y2="928"/>
+  <circle class="ok" cx="58" cy="948" r="8"/>
+  <text class="text small-text" x="76" y="953">Scan completed</text>
+  <line class="line" x1="188" y1="938" x2="188" y2="958"/>
+  <text class="muted small-text" x="206" y="953">Config validated</text>
+  <line class="line" x1="326" y1="938" x2="326" y2="958"/>
+  <text class="muted small-text" x="344" y="953">No write task running</text>
+  <line class="line" x1="516" y1="938" x2="516" y2="958"/>
+  <text class="muted small-text" x="534" y="953">PowerShell ok</text>
+  <line class="line" x1="650" y1="938" x2="650" y2="958"/>
+  <text class="warning-deep small-text" x="668" y="953">Bash warning</text>
+  <text class="muted small-text" x="1260" y="953">main...origin/main</text>
+  <text class="muted small-text" x="1410" y="953">Ctrl+K search</text>
+  <text class="muted small-text" x="1506" y="953">v0.1 design</text>
+</svg>

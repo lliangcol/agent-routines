@@ -65,9 +65,6 @@ try {
     if (-not (Test-Path -LiteralPath $packageJson) -and -not (Test-Path -LiteralPath $pyproject)) {
         Add-Warning 'No package.json or pyproject.toml was found; release ecosystem could not be inferred.'
     }
-    if ($Public) {
-        Add-Warning 'Public release mode requires SECURITY.md and SUPPORT.md before release readiness can pass.'
-    }
     Add-Warning 'This workflow does not publish, tag, push, mutate versions, install dependencies, or create release artifacts.'
 } catch {
     Add-Error $_.Exception.Message

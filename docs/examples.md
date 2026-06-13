@@ -9,12 +9,17 @@ These examples show how to invoke Skills in natural language and how to run work
 | `api-sync` | "Use `api-sync` to compare the backend DTO changes and update frontend wrappers, types, enums, and affected UI with minimal validation." |
 | `archive-record` | "Use `archive-record` to create a durable execution record with evidence and artifacts, then validate the archive layout." |
 | `commit-guard` | "Use `commit-guard` to validate the current changes, stage only the intended scope, create a local commit if clean, and do not push." |
+| `desktop-design-system` | "Use `desktop-design-system` to review the Electron install matrix UI for modern desktop productivity style, theme tokens, and readable status markers." |
+| `desktop-packaging-release` | "Use `desktop-packaging-release` to check Electron packaging readiness across Windows, macOS, and Linux without signing or publishing." |
+| `desktop-qa` | "Use `desktop-qa` to verify the Electron app in light, dark, and system themes with screenshots and platform notes." |
 | `dms-repair` | "Use `dms-repair` to confirm the current database state with readonly SQL, prepare minimal SQL for human DMS execution, and plan readonly post-checks." |
+| `electron-app-builder` | "Use `electron-app-builder` to implement the Electron command runner with secure IPC, allowlisted commands, theme switching, and i18n state." |
 | `env-audit` | "Use `env-audit` to diagnose this Windows and shell toolchain problem without installing or changing anything." |
 | `github-guard` | "Use `github-guard` to draft branch protection and required checks from local GitHub workflow evidence without saving remote settings." |
 | `governance-audit` | "Use `governance-audit` to audit current repository governance from live files and command output, excluding archived plans as proof." |
 | `graph-audit` | "Use `graph-audit` to check whether graph-first discovery is available for this repo and state the fallback if it is not indexed." |
 | `guarded-change` | "Use `guarded-change` to make the smallest safe repository change after reading local rules and running relevant gates." |
+| `i18n-checklist` | "Use `i18n-checklist` to verify Simplified Chinese and English translation keys, status labels, and language switching." |
 | `java-maven-verify` | "Use `java-maven-verify` to build the narrowest Maven test command for this module and handle PowerShell quoting correctly." |
 | `knowledge-drift` | "Use `knowledge-drift` to check whether these Markdown knowledge files still match current source paths and policies." |
 | `merge-fix` | "Use `merge-fix` to resolve current merge conflicts, preserve intended behavior from both sides, and run path-limited validation." |

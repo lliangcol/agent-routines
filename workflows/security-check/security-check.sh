@@ -53,7 +53,7 @@ while IFS= read -r -d '' file; do
   if [ -n "$private_matches" ]; then
     while IFS=: read -r line_no _; do append_text manual "private-path:${file#./}:$line_no"; done <<< "$private_matches"
   fi
-done < <(find . \( -path './.git' -o -path './node_modules' -o -path './target' -o -path './dist' -o -path './build' -o -path './__pycache__' \) -prune -o -type f -size -1048576c -print0 2>/dev/null)
+done < <(find . \( -type d \( -name '.git' -o -name 'node_modules' -o -name 'target' -o -name 'dist' -o -name 'build' -o -name 'out' -o -name 'release' -o -name 'coverage' -o -name 'tmp' -o -name 'temp' -o -name '.tmp' -o -name '.cache' -o -name '__pycache__' \) -prune \) -o -type f -size -1048576c -print0 2>/dev/null)
 
 add_check "files-scanned" true "$file_count files scanned, files over 1 MiB skipped."
 if [ -n "$high" ]; then add_check "high-confidence-findings" false "$high"; add_error "High-confidence sensitive patterns were found. Values are redacted; inspect the listed paths manually."; else add_check "high-confidence-findings" true "No high-confidence secret-like findings."; fi

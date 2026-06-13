@@ -9,12 +9,17 @@
 | `api-sync` | “使用 `api-sync` 对比后端 DTO 变更，并更新前端 wrappers、types、enums 和受影响 UI，最后做最小验证。” |
 | `archive-record` | “使用 `archive-record` 创建持久执行记录，保存 evidence 和 artifacts，并验证归档布局。” |
 | `commit-guard` | “使用 `commit-guard` 验证当前变更，只暂存目标范围，干净后创建本地提交，不要 push。” |
+| `desktop-design-system` | “使用 `desktop-design-system` review Electron 安装矩阵 UI，检查现代桌面生产力风格、主题 tokens 和可读状态标记。” |
+| `desktop-packaging-release` | “使用 `desktop-packaging-release` 检查 Electron 在 Windows、macOS 和 Linux 上的打包就绪度，不签名也不发布。” |
+| `desktop-qa` | “使用 `desktop-qa` 通过截图和平台说明验证 Electron 应用的浅色、深色和随系统主题。” |
 | `dms-repair` | “使用 `dms-repair` 先用只读 SQL 确认数据库现状，准备给人类 DMS 执行的最小 SQL，并规划只读 post-check。” |
+| `electron-app-builder` | “使用 `electron-app-builder` 实现 Electron 命令执行器，保持安全 IPC、命令白名单、主题切换和 i18n 状态。” |
 | `env-audit` | “使用 `env-audit` 诊断这个 Windows 和 shell 工具链问题，不安装也不修改任何内容。” |
 | `github-guard` | “使用 `github-guard` 基于本地 GitHub workflow 证据起草 branch protection 和 required checks，不保存远程设置。” |
 | `governance-audit` | “使用 `governance-audit` 只基于当前文件和命令输出审计仓库治理，不把归档计划当作当前证据。” |
 | `graph-audit` | “使用 `graph-audit` 检查当前 repo 是否可用 graph-first discovery；如果未索引，说明 fallback。” |
 | `guarded-change` | “使用 `guarded-change` 读取本地规则后做最小安全仓库改动，并运行相关 gates。” |
+| `i18n-checklist` | “使用 `i18n-checklist` 验证简体中文和英文翻译 key、状态标签和语言切换。” |
 | `java-maven-verify` | “使用 `java-maven-verify` 为这个 module 构造最窄 Maven 测试命令，并正确处理 PowerShell quoting。” |
 | `knowledge-drift` | “使用 `knowledge-drift` 检查这些 Markdown knowledge 文件是否仍匹配当前 source paths 和 policies。” |
 | `merge-fix` | “使用 `merge-fix` 解决当前 merge 冲突，保留双方意图，并运行路径限定验证。” |

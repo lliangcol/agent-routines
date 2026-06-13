@@ -79,7 +79,6 @@ if [ -f pyproject.toml ]; then
   grep -Eq '^\[build-system\]' pyproject.toml && add_check "pyproject-build-system" true "pyproject.toml [build-system] table probe." || add_check "pyproject-build-system" false "pyproject.toml [build-system] table probe."
 fi
 if [ ! -f package.json ] && [ ! -f pyproject.toml ]; then add_warning "No package.json or pyproject.toml was found; release ecosystem could not be inferred."; fi
-if [ "$public" = true ]; then add_warning "Public release mode requires SECURITY.md and SUPPORT.md before release readiness can pass."; fi
 add_warning "This workflow does not publish, tag, push, mutate versions, install dependencies, or create release artifacts."
 
 ok=true
