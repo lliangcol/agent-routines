@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-tags: true
       - name: Set script permissions
-        run: chmod +x tests/*.sh
+        run: chmod +x ./tests/*.sh
       - name: validate-structure
         run: ./tests/validate-structure.sh
       - name: validate-skills
