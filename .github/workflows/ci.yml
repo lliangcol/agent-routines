@@ -17,6 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           fetch-tags: true
       - name: Set script permissions
         run: chmod +x ./tests/*.sh
@@ -41,6 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           fetch-tags: true
       - name: validate-structure (pwsh)
         shell: pwsh
