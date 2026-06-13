@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0 - 2026-06-13
+
+- Fixed the executable bit on all 34 tracked `.sh` files (`git update-index --chmod=+x`); direct `./tests/*.sh` invocation previously failed with Permission denied on Linux/macOS checkouts. CI keeps a defensive `chmod +x tests/*.sh` step.
+- Added sh-vs-ps1 parity assertions to `tests/run-workflows.{sh,ps1}`: when the counterpart shell is available, every workflow runs through both implementations and must produce the same exit code, ok flag, check names, and warning/error counts.
+- Tightened gate-check custom command screening: shell control characters are rejected, the first token must be on a readonly-command allowlist (including a readonly git subcommand list), and the destructive-keyword denylist now also rejects `--output`. Two new smoke cases cover the control-character and allowlist rejections.
+- Extended the db-read SQL denylist with `into`, `copy`, `load`, `attach`, `vacuum`, and `lock`.
+- Renamed the shadowed PowerShell automatic variable `$args` in gate-check to `$shellArgs`.
+- Added `tests/validate-changelog.{sh,ps1}`: every CHANGELOG version except the newest must have a matching `vX.Y.Z` git tag and every tag a CHANGELOG entry; wired into the local gates and CI (checkouts now fetch tags).
+- Added readonly installation self-check commands: `adapters/common/check-install.{ps1,sh}` plus `check-user` and `check-project` wrappers for Claude Code and Codex, reporting ok/drift/broken per installed routine.
+- Added a gitleaks secret-scan job to CI.
+- Added `.github/CODEOWNERS` and a pull request template; documented the expected `main` branch protection settings in `CONTRIBUTING.md`.
+- Documented the executable-bit hard rule for new `.sh` files in `AGENTS.md` and `CONTRIBUTING.md`.
+
 ## 0.2.0 - 2026-06-13
 
 - Added GitHub Actions CI running all validation gates on Ubuntu, macOS, and Windows (PowerShell 7 and Windows PowerShell 5.1).

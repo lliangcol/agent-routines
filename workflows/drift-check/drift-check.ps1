@@ -38,7 +38,7 @@ try {
         Add-Error "Path does not exist: $Path"
     }
 
-    foreach ($item in @('docs','.agents\kb','docs\kb','.driftkb.yml','driftkb.toml')) {
+    foreach ($item in @('docs','.agents/kb','docs/kb','.driftkb.yml','driftkb.toml')) {
         Add-Check "knowledge-path:$item" (Test-Path -LiteralPath (Join-Path (Get-Location) $item)) 'Knowledge or drift metadata probe.'
     }
     $driftkb = Get-Command driftkb -ErrorAction SilentlyContinue

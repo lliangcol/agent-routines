@@ -69,7 +69,18 @@ probe_command() {
 
 if [ -d "$path" ]; then cwd="$(cd "$path" && pwd -P)"; cd "$path"; else cwd="$path"; add_error "Path does not exist: $path"; fi
 
+if command -v pwsh >/dev/null 2>&1; then
+  ps_version="$(pwsh -NoProfile -Command '$PSVersionTable.PSVersion.ToString()' 2>/dev/null || printf 'unknown')"
+  add_check "powershell-version" true "$ps_version"
+elif command -v powershell >/dev/null 2>&1; then
+  ps_version="$(powershell -NoProfile -Command '$PSVersionTable.PSVersion.ToString()' 2>/dev/null | tr -d '\r' || printf 'unknown')"
+  add_check "powershell-version" true "$ps_version"
+else
+  add_check "powershell-version" false "PowerShell not found."
+fi
 for name in node npm volta git bash python python3; do probe_command "$name"; done
+git_bash_path="C:/Program Files/Git/bin/bash.exe"
+[ -f "$git_bash_path" ] && add_check "git-bash-common-path" true "$git_bash_path" || add_check "git-bash-common-path" false "$git_bash_path"
 [ -n "${PATH:-}" ] && add_check "path-env-present" true "PATH environment variable probe." || add_check "path-env-present" false "PATH is empty."
 [ -f "$HOME/.claude/settings.json" ] && add_check "user-claude-settings" true "$HOME/.claude/settings.json" || add_check "user-claude-settings" false "User-level runtime settings not found."
 [ -d "$HOME/.codex/skills" ] && add_check "user-codex-skills" true "$HOME/.codex/skills" || add_check "user-codex-skills" false "User-level Codex skills not found."

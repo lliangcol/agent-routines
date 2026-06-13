@@ -1,12 +1,18 @@
 # Required repository paths checked by tests/validate-structure.{sh,ps1}.
 # One path per line, relative to the repository root. Lines starting with #
 # and blank lines are ignored. Keep this list sorted.
+.github/CODEOWNERS
+.github/pull_request_template.md
 .github/workflows/ci.yml
 AGENTS.md
 CHANGELOG.md
 CONTRIBUTING.md
 LICENSE
 README.md
+adapters/claude-code/check-project.ps1
+adapters/claude-code/check-project.sh
+adapters/claude-code/check-user.ps1
+adapters/claude-code/check-user.sh
 adapters/claude-code/install-manifest.ps1
 adapters/claude-code/install-manifest.sh
 adapters/claude-code/install-project.ps1
@@ -17,6 +23,10 @@ adapters/claude-code/uninstall-project.ps1
 adapters/claude-code/uninstall-project.sh
 adapters/claude-code/uninstall-user.ps1
 adapters/claude-code/uninstall-user.sh
+adapters/codex/check-project.ps1
+adapters/codex/check-project.sh
+adapters/codex/check-user.ps1
+adapters/codex/check-user.sh
 adapters/codex/install-manifest.ps1
 adapters/codex/install-manifest.sh
 adapters/codex/install-project.ps1
@@ -27,6 +37,8 @@ adapters/codex/uninstall-project.ps1
 adapters/codex/uninstall-project.sh
 adapters/codex/uninstall-user.ps1
 adapters/codex/uninstall-user.sh
+adapters/common/check-install.ps1
+adapters/common/check-install.sh
 adapters/common/install-manifest.ps1
 adapters/common/install-manifest.sh
 distribution/agent-routines.manifest.json
@@ -78,6 +90,8 @@ skills/security-review/SKILL.md
 tests/required-paths.txt
 tests/run-workflows.ps1
 tests/run-workflows.sh
+tests/validate-changelog.ps1
+tests/validate-changelog.sh
 tests/validate-docs.ps1
 tests/validate-docs.sh
 tests/validate-manifest.ps1

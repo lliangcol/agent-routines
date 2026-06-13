@@ -46,7 +46,7 @@ function Test-ReadonlySql {
         Add-Warning 'No SQL provided. This workflow validates readonly SQL only and never connects to a database.'
         return
     }
-    $blocked = '(?i)\b(insert|update|delete|drop|alter|truncate|create|replace|grant|revoke|merge|call|execute)\b'
+    $blocked = '(?i)\b(insert|update|delete|drop|alter|truncate|create|replace|grant|revoke|merge|call|execute|into|copy|load|attach|vacuum|lock)\b'
     if ($Query -match $blocked) {
         Add-Error 'SQL rejected because it contains write, DDL, or execution keywords.'
     } else {

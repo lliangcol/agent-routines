@@ -11,8 +11,12 @@ Read `AGENTS.md` (hard rules), `docs/skill-authoring-guide.md`, and `docs/workfl
 CI runs the full suite on Ubuntu (Bash) and Windows (PowerShell 7 and Windows PowerShell 5.1). Run locally before opening a PR:
 
 ```bash
-./tests/validate-structure.sh && ./tests/validate-skills.sh && ./tests/validate-workflows.sh && ./tests/validate-docs.sh && ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json && ./tests/run-workflows.sh
+./tests/validate-structure.sh && ./tests/validate-skills.sh && ./tests/validate-workflows.sh && ./tests/validate-docs.sh && ./tests/validate-changelog.sh && ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json && ./tests/run-workflows.sh
 ```
+
+`run-workflows` also asserts sh-vs-ps1 parity (same exit code, ok flag, check names, and warning/error counts) for every workflow whenever the counterpart shell is available, so keep both implementations in lockstep within a single change.
+
+When adding a new `.sh` file on Windows, set its executable bit in the git index before committing: `git update-index --chmod=+x <file>`. CI runs the Bash suite by direct invocation and fails on files without the bit.
 
 ## Adding a Skill
 
@@ -41,3 +45,11 @@ Every file in `docs/` requires a `.zh-CN.md` counterpart with equivalent content
 
 - Keep commits scoped; reference the validator output in the PR description.
 - Releases follow `docs/release-process.md`: CHANGELOG entry, full gates, annotated `vX.Y.Z` tag.
+
+## Branch Protection
+
+The `main` branch is expected to carry these GitHub settings (configured in the repository settings, not in this tree):
+
+- Require a pull request before merging, with review from the code owners in `.github/CODEOWNERS`.
+- Require the `Bash gates`, `PowerShell gates`, and `Secret scan (gitleaks)` status checks to pass.
+- Block force pushes and branch deletion.

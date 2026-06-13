@@ -16,6 +16,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+      - name: Set script permissions
+        run: chmod +x tests/*.sh
       - name: validate-structure
         run: ./tests/validate-structure.sh
       - name: validate-skills
@@ -24,6 +28,8 @@ jobs:
         run: ./tests/validate-workflows.sh
       - name: validate-docs
         run: ./tests/validate-docs.sh
+      - name: validate-changelog
+        run: ./tests/validate-changelog.sh
       - name: validate-manifest
         run: ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
       - name: run-workflows (smoke)
@@ -34,6 +40,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
       - name: validate-structure (pwsh)
         shell: pwsh
         run: ./tests/validate-structure.ps1
@@ -46,6 +54,9 @@ jobs:
       - name: validate-docs (pwsh)
         shell: pwsh
         run: ./tests/validate-docs.ps1
+      - name: validate-changelog (pwsh)
+        shell: pwsh
+        run: ./tests/validate-changelog.ps1
       - name: validate-manifest (pwsh)
         shell: pwsh
         run: ./tests/validate-manifest.ps1 -ManifestPath ./distribution/agent-routines.manifest.json
@@ -64,9 +75,23 @@ jobs:
       - name: validate-docs (Windows PowerShell 5.1)
         shell: powershell
         run: ./tests/validate-docs.ps1
+      - name: validate-changelog (Windows PowerShell 5.1)
+        shell: powershell
+        run: ./tests/validate-changelog.ps1
       - name: validate-manifest (Windows PowerShell 5.1)
         shell: powershell
         run: ./tests/validate-manifest.ps1 -ManifestPath ./distribution/agent-routines.manifest.json
       - name: run-workflows smoke (Windows PowerShell 5.1)
         shell: powershell
         run: ./tests/run-workflows.ps1
+
+  secrets:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

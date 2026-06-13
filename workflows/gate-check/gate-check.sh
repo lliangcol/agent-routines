@@ -8,7 +8,9 @@ custom_commands=()
 usage() {
   printf 'Usage: %s [--path PATH] [--custom-command CMD]\n' "$0"
   printf 'Produces stable JSON. Built-in checks are readonly. Custom commands run as given\n'
-  printf 'after a best-effort destructive-keyword filter; pass readonly commands only.\n'
+  printf 'after best-effort screening: a readonly-command allowlist, shell control-character\n'
+  printf 'rejection, and a destructive-keyword denylist. This is not a security boundary;\n'
+  printf 'pass readonly commands only.\n'
 }
 
 require_value() {
@@ -83,11 +85,49 @@ run_git() {
   git "$@" 2>&1
 }
 
+readonly_command_allowlist="git ls dir pwd cat type head tail wc grep rg stat file du df uname whoami echo"
+readonly_git_subcommands="status log diff show rev-parse ls-files describe blame shortlog grep"
+
 safe_custom_command() {
   local command="$1"
+  case "$command" in
+    *';'*|*'&'*|*'|'*|*'<'*|*'>'*|*'`'*|*'$('*|*$'\r'*|*$'\n'*)
+      add_error "Rejected custom command containing shell control characters: $command"
+      return ;;
+  esac
   if printf '%s' "$command" | grep -Eiq '\b(rm|del|erase|remove-item|rmdir|rd|format|shutdown|reboot|drop|delete|truncate|alter|insert|update|merge|grant|revoke|call|execute)\b'; then
     add_error "Rejected potentially destructive custom command: $command"
     return
+  fi
+  if printf '%s' "$command" | grep -Eiq -- '--output'; then
+    add_error "Rejected potentially destructive custom command: $command"
+    return
+  fi
+  local trimmed first_raw rest sub first allowed found
+  trimmed="${command#"${command%%[![:space:]]*}"}"
+  first_raw="${trimmed%%[[:space:]]*}"
+  rest="${trimmed#"$first_raw"}"
+  rest="${rest#"${rest%%[![:space:]]*}"}"
+  sub="$(printf '%s' "${rest%%[[:space:]]*}" | tr '[:upper:]' '[:lower:]')"
+  first="$(basename "$first_raw" | tr '[:upper:]' '[:lower:]')"
+  first="${first%.exe}"
+  found=false
+  for allowed in $readonly_command_allowlist; do
+    if [ "$allowed" = "$first" ]; then found=true; fi
+  done
+  if [ "$found" != true ]; then
+    add_error "Rejected custom command not on the readonly allowlist: $command"
+    return
+  fi
+  if [ "$first" = "git" ]; then
+    found=false
+    for allowed in $readonly_git_subcommands; do
+      if [ "$allowed" = "$sub" ]; then found=true; fi
+    done
+    if [ "$found" != true ]; then
+      add_error "Rejected git subcommand not on the readonly allowlist: $command"
+      return
+    fi
   fi
   local output
   if output="$(sh -c "$command" 2>&1)"; then
@@ -124,7 +164,7 @@ else
   add_warning "Skipping git gates because this is not a git repository or git is unavailable."
 fi
 if [ "${#custom_commands[@]}" -gt 0 ]; then
-  add_warning "Custom commands are screened by a best-effort keyword denylist only; the caller is responsible for passing readonly commands."
+  add_warning "Custom commands are screened by a readonly allowlist, a control-character filter, and a destructive-keyword denylist; this is best-effort screening, not a security boundary. The caller is responsible for passing readonly commands."
   for command in "${custom_commands[@]}"; do safe_custom_command "$command"; done
 fi
 

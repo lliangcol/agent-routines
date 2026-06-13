@@ -15,7 +15,7 @@ This repository versions the whole routine library as one unit. Consumers pin a 
 1. Confirm a clean working tree on `main`.
 2. Update `CHANGELOG.md` with a new `X.Y.Z - YYYY-MM-DD` section listing user-visible changes.
 3. Run all validation gates on at least one Bash and one PowerShell platform:
-   - `validate-structure`, `validate-skills`, `validate-workflows`, `validate-docs`, `validate-manifest`, `run-workflows`.
+   - `validate-structure`, `validate-skills`, `validate-workflows`, `validate-docs`, `validate-changelog`, `validate-manifest`, `run-workflows`.
 4. Confirm CI is green for the release commit.
 5. Tag: `git tag -a vX.Y.Z -m "Agent Routines X.Y.Z"`.
 6. Push branch and tag: `git push origin main vX.Y.Z` (requires human confirmation).

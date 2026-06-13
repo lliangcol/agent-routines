@@ -15,6 +15,7 @@ Run all of these before claiming any change is done. Bash and PowerShell suites 
 ./tests/validate-skills.sh
 ./tests/validate-workflows.sh
 ./tests/validate-docs.sh
+./tests/validate-changelog.sh
 ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
 ./tests/run-workflows.sh
 ```
@@ -24,6 +25,7 @@ Run all of these before claiming any change is done. Bash and PowerShell suites 
 .\tests\validate-skills.ps1
 .\tests\validate-workflows.ps1
 .\tests\validate-docs.ps1
+.\tests\validate-changelog.ps1
 .\tests\validate-manifest.ps1 -ManifestPath .\distribution\agent-routines.manifest.json
 .\tests\run-workflows.ps1
 ```
@@ -33,6 +35,7 @@ Run all of these before claiming any change is done. Bash and PowerShell suites 
 - Workflow scripts must stay readonly: no file writes inside the inspected repository, no network, no database connections, no git mutations.
 - Every workflow keeps `.sh` and `.ps1` behavior in parity: same checks, same JSON shape, same exit codes. A change to one implementation is incomplete until the other matches.
 - PowerShell scripts must remain ASCII-only and Windows PowerShell 5.1 compatible (no `&&`, no ternary, no null-coalescing).
+- Every `.sh` file must carry the executable bit in the git index. On Windows set it explicitly: `git update-index --chmod=+x <file>`.
 - Adding or removing a required file means updating `tests/required-paths.txt` (single source for both validate-structure implementations).
 - `docs/catalog.md` and `docs/catalog.zh-CN.md` are derived from the `Recommended workflows:` lines in `skills/*/SKILL.md`; `tests/validate-docs` enforces this. Change SKILL.md first, then the catalogs.
 - Every file in `docs/` needs a `.zh-CN.md` counterpart (also enforced by `tests/validate-docs`).
@@ -44,4 +47,4 @@ Completed significant executions are archived under `executions/YYYY/MM/YYYY-MM-
 
 ## Releases
 
-See `docs/release-process.md`. CHANGELOG versions must have a matching `vX.Y.Z` git tag.
+See `docs/release-process.md`. CHANGELOG versions must have a matching `vX.Y.Z` git tag; `tests/validate-changelog` enforces this (the newest entry may stay untagged until the release is cut).

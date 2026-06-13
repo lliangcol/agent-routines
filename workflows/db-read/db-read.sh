@@ -103,7 +103,7 @@ if [ -n "$sql_file" ]; then
 fi
 if [ -z "${query:-}" ]; then
   add_warning "No SQL provided. This workflow validates readonly SQL only and never connects to a database."
-elif printf '%s' "$query" | grep -Eiq '\b(insert|update|delete|drop|alter|truncate|create|replace|grant|revoke|merge|call|execute)\b'; then
+elif printf '%s' "$query" | grep -Eiq '\b(insert|update|delete|drop|alter|truncate|create|replace|grant|revoke|merge|call|execute|into|copy|load|attach|vacuum|lock)\b'; then
   add_error "SQL rejected because it contains write, DDL, or execution keywords."
 else
   add_check "readonly-sql" true "SQL passed keyword validation. Integrate a project-owned readonly wrapper before real use."

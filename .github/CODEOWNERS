@@ -1,0 +1,10 @@
+# Default owners for everything in the repository.
+# Later matches take precedence over earlier ones.
+* @lliangcol
+
+# Governance-critical files require the maintainer's review.
+/AGENTS.md @lliangcol
+/CONTRIBUTING.md @lliangcol
+/tests/ @lliangcol
+/.github/ @lliangcol
+/distribution/ @lliangcol

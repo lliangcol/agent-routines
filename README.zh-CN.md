@@ -17,15 +17,23 @@ Agent Routines 是一个可版本化、适合托管在 GitHub 的源代码仓库
 .\tests\validate-structure.ps1
 .\tests\validate-skills.ps1
 .\tests\validate-workflows.ps1
+.\tests\validate-docs.ps1
+.\tests\validate-changelog.ps1
 .\tests\validate-manifest.ps1 -ManifestPath .\distribution\agent-routines.manifest.json
+.\tests\run-workflows.ps1
 ```
 
 ```bash
 ./tests/validate-structure.sh
 ./tests/validate-skills.sh
 ./tests/validate-workflows.sh
+./tests/validate-docs.sh
+./tests/validate-changelog.sh
 ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
+./tests/run-workflows.sh
 ```
+
+`validate-docs` 检查中英文文档配对和目录一致性。`validate-changelog` 检查 CHANGELOG 版本与 `vX.Y.Z` git tag 的一致性。`run-workflows` 在临时 fixture 仓库上执行每个 workflow、校验 JSON 输出契约，并在对应 shell 可用时断言 sh 与 ps1 实现的一致性。同样的门禁会在 CI 的 Ubuntu、macOS 和 Windows（PowerShell 7 与 Windows PowerShell 5.1）上运行，另有 gitleaks 密钥扫描。
 
 ## Codex 用户级安装
 
@@ -83,6 +91,22 @@ Agent Routines 是一个可版本化、适合托管在 GitHub 的源代码仓库
 ```
 
 Manifest 模式只复制清单中列出的 Skill 和 workflow 目录。它不会移除 manifest 中不存在的已安装内容。使用 `-Force` 或 `--force` 替换已经存在的目标目录。
+
+## 安装自检
+
+安装后可对照源仓库校验已安装 Skills 和 workflows 的完整性。该检查是只读的：结果分为 `ok`、`drift`（内容与源仓库不一致，通常是旧版本）和 `broken`（文件缺失），只有出现 `broken` 时退出码非零。
+
+```powershell
+.\adapters\claude-code\check-user.ps1
+.\adapters\claude-code\check-project.ps1 -ProjectPath C:\path\to\repo
+.\adapters\codex\check-user.ps1
+```
+
+```bash
+./adapters/claude-code/check-user.sh
+./adapters/claude-code/check-project.sh --project-path /path/to/repo
+./adapters/codex/check-user.sh
+```
 
 ## 已包含例行能力
 

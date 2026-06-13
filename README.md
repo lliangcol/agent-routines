@@ -22,6 +22,7 @@ From the source repository root:
 .\tests\validate-skills.ps1
 .\tests\validate-workflows.ps1
 .\tests\validate-docs.ps1
+.\tests\validate-changelog.ps1
 .\tests\validate-manifest.ps1 -ManifestPath .\distribution\agent-routines.manifest.json
 .\tests\run-workflows.ps1
 ```
@@ -31,11 +32,12 @@ From the source repository root:
 ./tests/validate-skills.sh
 ./tests/validate-workflows.sh
 ./tests/validate-docs.sh
+./tests/validate-changelog.sh
 ./tests/validate-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
 ./tests/run-workflows.sh
 ```
 
-`validate-docs` checks bilingual documentation pairing and catalog consistency. `run-workflows` executes every workflow against a temporary fixture repository and validates the JSON output contract. The same gates run in CI on Ubuntu, macOS, and Windows (PowerShell 7 and Windows PowerShell 5.1).
+`validate-docs` checks bilingual documentation pairing and catalog consistency. `validate-changelog` checks that CHANGELOG versions and `vX.Y.Z` git tags stay consistent. `run-workflows` executes every workflow against a temporary fixture repository, validates the JSON output contract, and asserts sh-vs-ps1 parity whenever the counterpart shell is available. The same gates run in CI on Ubuntu, macOS, and Windows (PowerShell 7 and Windows PowerShell 5.1), plus a gitleaks secret scan.
 
 ## Codex User-Level Installation
 
@@ -93,6 +95,22 @@ Use a JSON manifest when you need one reviewed source of truth for which Skills 
 ```
 
 Manifest mode copies only the listed Skill and workflow folders. It does not remove installed content that is absent from the manifest. Use `-Force` or `--force` to replace listed targets that already exist.
+
+## Installation Self-Check
+
+After installing, verify the integrity of installed Skills and workflows against the source repository. The check is readonly: it reports `ok`, `drift` (content differs from source, usually an older version), or `broken` (files missing), and exits nonzero only on `broken`.
+
+```powershell
+.\adapters\claude-code\check-user.ps1
+.\adapters\claude-code\check-project.ps1 -ProjectPath C:\path\to\repo
+.\adapters\codex\check-user.ps1
+```
+
+```bash
+./adapters/claude-code/check-user.sh
+./adapters/claude-code/check-project.sh --project-path /path/to/repo
+./adapters/codex/check-user.sh
+```
 
 ## Included Routines
 

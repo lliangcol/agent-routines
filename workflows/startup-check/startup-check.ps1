@@ -41,12 +41,13 @@ try {
             'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run',
             'HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run'
         )) {
+            $displayKey = $key -replace ':', ''
             if (Test-Path -LiteralPath $key) {
                 $props = Get-ItemProperty -LiteralPath $key
                 $names = @($props.PSObject.Properties | Where-Object { $_.Name -notmatch '^PS' } | Select-Object -ExpandProperty Name)
-                Add-Check "registry:$key" $true "$($names.Count) entries: $($names -join ', ')"
+                Add-Check "registry:$displayKey" $true "$($names.Count) entries: $($names -join ', ')"
             } else {
-                Add-Check "registry:$key" $false 'Registry key not found.'
+                Add-Check "registry:$displayKey" $false 'Registry key not found.'
             }
         }
         if (Get-Command Get-ScheduledTask -ErrorAction SilentlyContinue) {

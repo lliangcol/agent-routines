@@ -15,7 +15,7 @@
 1. 确认 `main` 分支工作区干净。
 2. 在 `CHANGELOG.md` 中新增 `X.Y.Z - YYYY-MM-DD` 小节，列出用户可见的变更。
 3. 至少在一个 Bash 平台和一个 PowerShell 平台运行全部验证门禁：
-   - `validate-structure`、`validate-skills`、`validate-workflows`、`validate-docs`、`validate-manifest`、`run-workflows`。
+   - `validate-structure`、`validate-skills`、`validate-workflows`、`validate-docs`、`validate-changelog`、`validate-manifest`、`run-workflows`。
 4. 确认发布 commit 的 CI 为绿色。
 5. 打 tag：`git tag -a vX.Y.Z -m "Agent Routines X.Y.Z"`。
 6. 推送分支和 tag：`git push origin main vX.Y.Z`（需要人工确认）。
