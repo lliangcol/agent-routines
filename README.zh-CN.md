@@ -92,7 +92,7 @@ Agent Routines 是一个可版本化、适合托管在 GitHub 的源代码仓库
 ./adapters/claude-code/install-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
 ```
 
-Manifest 模式只复制清单中列出的 Skill 和 workflow 目录。它不会移除 manifest 中不存在的已安装内容。使用 `-Force` 或 `--force` 替换已经存在的目标目录。
+Manifest 模式在 `merge` 模式下只复制清单中列出的 Skill 和 workflow 目录。它不会移除 manifest 中不存在的已安装内容。使用 `-Mode replace-listed` 或 `--mode replace-listed` 替换已经存在的目标目录；`-Force` 和 `--force` 仅作为该模式的兼容别名保留。
 
 进行大范围或团队安装前，先运行一次安装器 dry-run 并审阅目标路径。PowerShell 安装器使用 `-WhatIf`，Bash 安装器使用 `--dry-run`。
 
@@ -106,7 +106,7 @@ Manifest 模式只复制清单中列出的 Skill 和 workflow 目录。它不会
 ./tools/generate-install-manifest.sh --config-path ./.agent-routines/install-discovery.config.json
 ```
 
-详见 `docs/install-discovery.zh-CN.md` 和 `tools/install-discovery.config.example.json`。生成器默认 dry-run；只有传入 `-WriteManifest -Apply` 或 `--write-manifest --apply` 才执行安装。
+详见 `docs/install-discovery.zh-CN.md` 和 `tools/install-discovery.config.example.json`。生成器默认 dry-run；只有传入 `-WriteManifest -Apply` 或 `--write-manifest --apply` 才执行安装，并且需要明确选择 `merge`、`replace-listed` 或 `sync-prune` 等 mode。
 
 ## 安装自检
 
@@ -136,9 +136,10 @@ workflow 运行时包含针对 preflight 状态、门禁、提交、发布、安
 - `workflows/`：确定性工作流脚本、schema 和示例输出。
 - `adapters/`：Codex 和 Claude Code 的安装器与卸载器。
 - `distribution/`：经过审阅的用户级和项目级分发 manifest 示例。
-- `docs/`：架构、分发、兼容性、安全、图表、编写手册、Electron 应用执行规范、UI 设计契约、提前安装清单和发布流程。
-- `tests/`：PowerShell 和 Bash 版本的结构、Skill、workflow 和 manifest 校验器。
+- `docs/`：架构、分发、安装发现、兼容性、安全、图表、编写手册、Electron 应用执行规范、UI/分发设计契约、提前安装清单和发布流程。
+- `tests/`：PowerShell 和 Bash 版本的结构、Skill、workflow、docs、manifest 和 install-discovery config 校验器，以及 workflow smoke tests。
 - `tools/`：基于配置的 manifest 发现和安装计划工具。
+- `executions/`：重大操作的持久证据包，遵循 archive-record 布局。
 
 ## 安全边界
 

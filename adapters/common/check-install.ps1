@@ -14,6 +14,8 @@ if ($Help) {
 }
 
 $ErrorActionPreference = 'Stop'
+[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding -ArgumentList $false
+$OutputEncoding = [Console]::OutputEncoding
 if (@('codex', 'claude-code') -notcontains $Tool) {
     throw 'Tool must be codex or claude-code.'
 }
@@ -39,6 +41,20 @@ $script:okCount = 0
 $script:driftCount = 0
 $script:brokenCount = 0
 
+function Get-Sha256FileHash {
+    param([string]$Path)
+    $sha256 = [System.Security.Cryptography.SHA256]::Create()
+    $stream = $null
+    try {
+        $stream = [System.IO.File]::OpenRead($Path)
+        $hashBytes = $sha256.ComputeHash($stream)
+        return ([System.BitConverter]::ToString($hashBytes) -replace '-', '')
+    } finally {
+        if ($null -ne $stream) { $stream.Dispose() }
+        $sha256.Dispose()
+    }
+}
+
 function Compare-InstalledDirectory {
     param([string]$Kind, [string]$Name, [string]$Source, [string]$Target)
     $script:checked++
@@ -50,8 +66,8 @@ function Compare-InstalledDirectory {
         if (-not (Test-Path -LiteralPath $targetFile)) {
             $missing++
         } else {
-            $sourceHash = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash
-            $targetHash = (Get-FileHash -LiteralPath $targetFile -Algorithm SHA256).Hash
+            $sourceHash = Get-Sha256FileHash -Path $file.FullName
+            $targetHash = Get-Sha256FileHash -Path $targetFile
             if ($sourceHash -ne $targetHash) { $differs++ }
         }
     }

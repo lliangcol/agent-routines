@@ -61,8 +61,138 @@ function Test-Block {
     }
 }
 
+function Get-NormalizedPath {
+    param([string]$PathValue)
+    return ([System.IO.Path]::GetFullPath($PathValue)).TrimEnd([char[]]@('\','/'))
+}
+
+function Test-SamePath {
+    param([string]$Actual, [string]$Expected)
+    return [string]::Equals((Get-NormalizedPath -PathValue $Actual), (Get-NormalizedPath -PathValue $Expected), [System.StringComparison]::OrdinalIgnoreCase)
+}
+
+function Resolve-ManifestProjectPathLoose {
+    param([string]$ProjectPath)
+    if ([System.IO.Path]::IsPathRooted($ProjectPath)) { return [System.IO.Path]::GetFullPath($ProjectPath) }
+    return [System.IO.Path]::GetFullPath((Join-Path $root $ProjectPath))
+}
+
+function Get-ExpectedV2Source {
+    param([string]$Kind, [string]$Name)
+    if ($Kind -eq 'skill') { return (Join-Path $skillRoot $Name) }
+    if ($Kind -eq 'workflow') { return (Join-Path $workflowRoot $Name) }
+    return $null
+}
+
+function Get-ExpectedV2Target {
+    param([object]$Action)
+    $kind = [string]$Action.kind
+    $name = [string]$Action.name
+    $scope = [string]$Action.scope
+    $tool = [string]$Action.tool
+    if ($kind -eq 'workflow') {
+        if ($tool -ne 'shared') {
+            $script:errors += 'Workflow actions must use tool shared.'
+            return $null
+        }
+        if ($scope -eq 'user') { return (Join-Path $HOME ".agent-routines\workflows\$name") }
+        if ($scope -eq 'project') {
+            if ([string]::IsNullOrWhiteSpace([string]$Action.projectPath)) {
+                $script:errors += 'Project-scoped actions must include projectPath.'
+                return $null
+            }
+            $projectRoot = Resolve-ManifestProjectPathLoose -ProjectPath ([string]$Action.projectPath)
+            if (-not (Test-Path -LiteralPath $projectRoot)) { $script:errors += "Missing project path: $($Action.projectPath)" }
+            return (Join-Path (Join-Path $projectRoot '.agent-routines\workflows') $name)
+        }
+    } elseif ($kind -eq 'skill') {
+        if (@('codex','claudeCode') -notcontains $tool) {
+            $script:errors += "Skill action tool must be codex or claudeCode: $tool"
+            return $null
+        }
+        $skillFolder = if ($tool -eq 'codex') { '.codex\skills' } else { '.claude\skills' }
+        if ($scope -eq 'user') {
+            $skillRootPath = if ($tool -eq 'codex') { Join-Path $HOME '.codex\skills' } else { Join-Path $HOME '.claude\skills' }
+            return (Join-Path $skillRootPath $name)
+        }
+        if ($scope -eq 'project') {
+            if ([string]::IsNullOrWhiteSpace([string]$Action.projectPath)) {
+                $script:errors += 'Project-scoped actions must include projectPath.'
+                return $null
+            }
+            $projectRoot = Resolve-ManifestProjectPathLoose -ProjectPath ([string]$Action.projectPath)
+            if (-not (Test-Path -LiteralPath $projectRoot)) { $script:errors += "Missing project path: $($Action.projectPath)" }
+            return (Join-Path (Join-Path $projectRoot $skillFolder) $name)
+        }
+    }
+    $script:errors += "Unsupported action scope or kind: $scope/$kind"
+    return $null
+}
+
+function Test-V2ActionPaths {
+    param([object]$Action)
+    $kind = [string]$Action.kind
+    $name = [string]$Action.name
+    $expectedSource = Get-ExpectedV2Source -Kind $kind -Name $name
+    $expectedTarget = Get-ExpectedV2Target -Action $Action
+    if ($null -eq $expectedSource -or $null -eq $expectedTarget) { return }
+    if (-not (Test-SamePath -Actual ([string]$Action.sourcePath) -Expected $expectedSource)) {
+        $script:errors += "action.sourcePath does not match expected source for $kind ${name}: $($Action.sourcePath)"
+    }
+    if (-not (Test-SamePath -Actual ([string]$Action.targetPath) -Expected $expectedTarget)) {
+        $script:errors += "action.targetPath does not match expected target for $kind ${name}: $($Action.targetPath)"
+    }
+    if ([string]$Action.operation -ne 'prune-candidate' -and -not (Test-Path -LiteralPath $expectedSource)) {
+        $script:errors += "Missing source path: $expectedSource"
+    }
+}
+
 $json = Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json
-if ($json.version -ne 1) { $errors += 'Manifest version must be 1.' }
+if ($json.version -eq 2) {
+    if ($null -eq $json.desiredTargets -or $json.desiredTargets -is [string] -or $json.desiredTargets -isnot [System.Collections.IEnumerable]) {
+        $errors += 'desiredTargets must be an array.'
+    }
+    if ($null -eq $json.actions -or $json.actions -is [string] -or $json.actions -isnot [System.Collections.IEnumerable]) {
+        $errors += 'actions must be an array.'
+    }
+    foreach ($action in @($json.actions)) {
+        $hasRequiredFields = $true
+        foreach ($name in @('operation','kind','name','sourcePath','targetPath','tool','scope')) {
+            if ($null -eq $action.PSObject.Properties[$name] -or [string]::IsNullOrWhiteSpace([string]$action.PSObject.Properties[$name].Value)) {
+                $errors += "action.$name is required."
+                $hasRequiredFields = $false
+            }
+        }
+        if ($null -ne $action.name -and [string]$action.name -notmatch '^[a-z0-9]+(-[a-z0-9]+)*$') {
+            $errors += "action.name contains invalid name: $($action.name)"
+        }
+        if ($null -ne $action.operation -and @('install','skip','replace','prune-candidate') -notcontains [string]$action.operation) {
+            $errors += "Unsupported action operation: $($action.operation)"
+        }
+        if ($null -ne $action.kind -and @('skill','workflow') -notcontains [string]$action.kind) {
+            $errors += "Unsupported action kind: $($action.kind)"
+        }
+        if ($null -ne $action.scope -and @('user','project') -notcontains [string]$action.scope) {
+            $errors += "Unsupported action scope: $($action.scope)"
+        }
+        if ($null -ne $action.tool -and @('codex','claudeCode','shared') -notcontains [string]$action.tool) {
+            $errors += "Unsupported action tool: $($action.tool)"
+        }
+        if ($hasRequiredFields) {
+            Test-V2ActionPaths -Action $action
+        }
+    }
+    if ($null -eq $json.backupPlan) { $errors += 'backupPlan is required.' }
+    if ($null -eq $json.restorePlan) { $errors += 'restorePlan is required.' }
+    if ($null -eq $json.summary) { $errors += 'summary is required.' }
+    if ($errors.Count -gt 0) {
+        Write-Error ($errors -join "`n")
+        exit 1
+    }
+    Write-Host 'validate-manifest: ok'
+    exit 0
+}
+if ($json.version -ne 1) { $errors += 'Manifest version must be 1 or 2.' }
 
 foreach ($toolKey in @('codex','claudeCode')) {
     $block = if ($null -ne $json.user -and $null -ne $json.user.PSObject.Properties[$toolKey]) { $json.user.PSObject.Properties[$toolKey].Value } else { $null }

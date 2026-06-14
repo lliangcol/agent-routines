@@ -10,7 +10,7 @@ $errors = @()
 $workflows = Get-ChildItem -LiteralPath $workflowRoot -Directory
 foreach ($workflow in $workflows) {
     $name = $workflow.Name
-    $required = @('README.md', "$name.ps1", "$name.sh", 'schema.json', 'examples/sample-output.json')
+    $required = @('README.md', 'README.zh-CN.md', "$name.ps1", "$name.sh", 'schema.json', 'examples/sample-output.json')
     foreach ($item in $required) {
         $path = Join-Path $workflow.FullName $item
         if (-not (Test-Path -LiteralPath $path)) { $errors += "Missing workflow file: $name/$item" }

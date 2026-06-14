@@ -11,8 +11,10 @@ $skills = Get-ChildItem -LiteralPath $skillRoot -Directory
 foreach ($skill in $skills) {
     $skillMd = Join-Path $skill.FullName 'SKILL.md'
     $readme = Join-Path $skill.FullName 'README.md'
+    $readmeZh = Join-Path $skill.FullName 'README.zh-CN.md'
     if (-not (Test-Path -LiteralPath $skillMd)) { $errors += "Missing SKILL.md: $($skill.Name)"; continue }
     if (-not (Test-Path -LiteralPath $readme)) { $errors += "Missing README.md: $($skill.Name)" }
+    if (-not (Test-Path -LiteralPath $readmeZh)) { $errors += "Missing README.zh-CN.md: $($skill.Name)" }
     $text = Get-Content -LiteralPath $skillMd -Raw
     if ($text -notmatch '(?s)^---\s*\r?\n(.*?)\r?\n---') { $errors += "Missing YAML frontmatter: $($skill.Name)"; continue }
     $front = $Matches[1]

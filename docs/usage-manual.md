@@ -14,7 +14,7 @@ For a complete inventory, see [Routine Catalog](catalog.md). For prompt and comm
 
 For cross-project reuse, install the broadly reusable Skills from the manifest at user level: guarded-change, review-loop, merge-fix, env-audit, runtime-repair, commit-guard, prompt-qa, release-guard, security-review, github-guard, and graph-audit. Install project-specific behavior at project level only after reviewing the target repository rules.
 
-Before broad installation or reinstallation, run installer dry-run mode and review the target list. PowerShell installers use `-WhatIf`; Bash installers use `--dry-run`. Dry-run mode must not create target directories, copy files, delete files, or replace installed content.
+Before broad installation or reinstallation, run installer dry-run mode and review the target list. PowerShell installers use `-WhatIf`; Bash installers use `--dry-run`. For multi-project distribution, prefer install discovery config v2 and review the generated `actions[]` before Apply. Dry-run mode must not create target directories, copy files, delete files, or replace installed content.
 
 Use domain workflows as readonly probes before making changes:
 

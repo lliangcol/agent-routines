@@ -1,0 +1,14 @@
+appId: io.agent-routines.manager
+productName: Agent Routines Manager
+directories:
+  output: out
+  buildResources: resources
+files:
+  - dist/**
+  - package.json
+win:
+  icon: resources/icon.ico
+  signExecutable: false
+asar: true
+npmRebuild: false
+publish: null

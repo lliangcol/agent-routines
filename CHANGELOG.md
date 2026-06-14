@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0 - 2026-06-14
+
+- Added the Agent Routines Manager desktop app with Electron, Vite, React, typed IPC contracts, local settings, task queueing, diagnostics, documentation search, and package scripts.
+- Added a guided install-discovery and distribution flow with reviewed config validation, manifest digest checks, dry-run planning, template configs for common project types, and guarded apply behavior.
+- Added manager UI coverage for inventory, install matrix, projects, policy, distribution, validation, task center, docs, settings, themes, and English/Simplified Chinese localization.
+- Added Playwright and Vitest coverage for the manager shell, distribution safety checks, install discovery services, inventory behavior, and shared schemas.
+- Added manager user documentation, installation walkthroughs, manual test cases, distribution-guide UI docs, and install-discovery manifest template docs with Chinese counterparts.
+- Added Chinese README coverage for all Skills and workflows, and strengthened docs/skills/workflows validators so bilingual routine documentation stays complete.
+- Hardened manifest generation, install adapters, install-discovery validation, and PowerShell regression coverage for manifest digest and target-boundary checks.
+- Cleaned local execution evidence from the release commit so repository history carries source, docs, tests, and deterministic fixtures without bulky run artifacts.
+
 ## 0.4.0 - 2026-06-13
 
 - Hardened `doc-check` custom command screening to match `gate-check`: shell control characters, destructive keywords, `--output`, non-allowlisted commands, and non-readonly `git` subcommands are rejected.

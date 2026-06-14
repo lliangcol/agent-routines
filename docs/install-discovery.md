@@ -1,44 +1,65 @@
 # Install Discovery
 
-Install discovery builds an installation manifest from a reviewed configuration and the current local installation state. It is intended for machines where Agent Routines are used across many repositories and the operator wants one auditable plan before installing.
+Install discovery builds a reviewed desired state and an installation manifest from the source repository and the current local installation state. It is intended for machines where Agent Routines are distributed to user-level tool folders and multiple project repositories.
 
 The generator is conservative by default:
 
 - It never scans the whole disk.
-- It scans only user-level targets and project roots listed in the config.
+- It scans only configured user targets and configured discovery roots.
 - It writes no files unless `-WriteManifest` or `--write-manifest` is passed.
 - It installs nothing unless `-Apply` or `--apply` is also passed.
-- It reports installed folders that do not exist in this source repository instead of adding or deleting them.
+- Unknown and unclassified installed items are report-only.
 
-## Config
+## Config v2
 
-Start from `tools/install-discovery.config.example.json` and save a reviewed copy outside tracked distribution manifests, for example:
+Start from `tools/install-discovery.config.example.json` and save a reviewed copy, for example:
 
 ```text
 .agent-routines/install-discovery.config.json
 ```
 
-The key fields are:
+For project-type starting points, use the sanitized templates in [Install Discovery Manifest Templates](install-discovery-manifest-templates.md).
+
+Key fields:
 
 | Field | Purpose |
 | --- | --- |
-| `projectRoots` | Explicit roots to scan for Git repositories, such as `D:\Work\Projects` and `D:\Repositories`. |
-| `tools` | Tool sections to generate: `codex`, `claudeCode`, or both. |
-| `projectDiscovery.maxDepth` | Maximum directory depth below each project root. |
-| `projectDiscovery.excludeDirs` | Directory names skipped during discovery. Include temporary/cache names such as `.tmp`, `.cache`, `tmp`, and `temp` unless you intentionally manage repos there. |
-| `projectDiscovery.skipNestedRepos` | Stops traversal below a discovered Git repo when `true`, which is the safer default for large project roots. |
-| `scopePolicy.userLevelSkills` | Skills that should be generated under `user.<tool>.skills`. |
-| `scopePolicy.projectLevelOnlySkills` | Skills that must not be promoted to user level. User-level installs are reported as conflicts. |
-| `scopePolicy.userLevelWorkflows` | Workflows generated at user level. |
-| `scopePolicy.projectDefaultWorkflows` | Workflows added for projects that already have project-level Agent Routines targets. |
+| `version` | Use `2` for the current desired-state model. |
+| `userTargets.enabled` | Enables or disables user-level desired targets. |
+| `userTargets.tools` | User-level tools: `codex`, `claudeCode`, or both. |
+| `userTargets.skills.<tool>` | Skills installed to that tool's user folder. |
+| `userTargets.workflows` | Workflows installed to the shared user runtime. |
+| `projectDefaults` | Default desired state for discovered projects. |
+| `projectTargets[]` | Explicit per-project desired state and overrides. |
+| `projectTargets[].createTargets` | Whether the generator may create missing project target folders. |
+| `projectTargets[].mode` | Per-project sync mode for non-destructive desired-state planning. |
+| `discovery.roots` | Reviewed roots to scan for Git repositories. |
+| `discovery.maxDepth` | Maximum scan depth below each root. |
+| `discovery.excludeDirs` | Directory names skipped during discovery. |
+| `discovery.skipNestedRepos` | Stops traversal below a discovered Git repository when `true`. |
+| `promotionRules.doNotPromoteToUserSkills` | Skills that must not be installed at user level. This is not a project install list. |
 | `output.manifestPath` | Generated manifest path, resolved from the source repository root. |
 | `output.reportPath` | Generated plan report path, resolved from the source repository root. |
+| `applySafety.unknownInstalledItems` | Must be `report-only`. |
 
-Do not put `apply` in the config. `install.force` may be present only as `false`; replacement must be triggered by the CLI flag. Installation and replacement must be explicit so a committed config cannot silently modify a machine.
+Config v2 must not contain `force`, `pruneUnlisted`, `defaultMode`, or destructive apply switches. Destructive behavior comes only from the current UI or CLI request.
+
+## v1 Compatibility
+
+v1 configs are accepted as migration input:
+
+- `projectRoots` becomes `discovery.roots`.
+- `projectDiscovery` becomes `discovery`.
+- `scopePolicy.userLevelSkills` becomes `userTargets.skills`.
+- `scopePolicy.userLevelWorkflows` becomes `userTargets.workflows`.
+- `scopePolicy.projectDefaultWorkflows` becomes `projectDefaults.workflows`.
+- `scopePolicy.projectLevelOnlySkills` becomes `promotionRules.doNotPromoteToUserSkills`.
+
+New files should be written as v2.
 
 ## Commands
 
-Validate a config shape without scanning or installing:
+Validate config shape:
 
 ```powershell
 .\tests\validate-install-discovery-config.ps1 -ConfigPath .\.agent-routines\install-discovery.config.json
@@ -48,67 +69,72 @@ Validate a config shape without scanning or installing:
 ./tests/validate-install-discovery-config.sh --config-path ./.agent-routines/install-discovery.config.json
 ```
 
-Generate a dry-run plan only:
+Generate a dry-run plan:
 
 ```powershell
-.\tools\generate-install-manifest.ps1 -ConfigPath .\.agent-routines\install-discovery.config.json
+.\tools\generate-install-manifest.ps1 -ConfigPath .\.agent-routines\install-discovery.config.json -ApplyMode dry-run
 ```
 
 ```bash
-./tools/generate-install-manifest.sh --config-path ./.agent-routines/install-discovery.config.json
+./tools/generate-install-manifest.sh --config-path ./.agent-routines/install-discovery.config.json --mode dry-run
 ```
 
-Write the manifest and plan, then validate the manifest:
+Write the generated manifest and report:
 
 ```powershell
-.\tools\generate-install-manifest.ps1 -ConfigPath .\.agent-routines\install-discovery.config.json -WriteManifest
+.\tools\generate-install-manifest.ps1 -ConfigPath .\.agent-routines\install-discovery.config.json -WriteManifest -ApplyMode merge
 ```
 
 ```bash
-./tools/generate-install-manifest.sh --config-path ./.agent-routines/install-discovery.config.json --write-manifest
+./tools/generate-install-manifest.sh --config-path ./.agent-routines/install-discovery.config.json --write-manifest --mode merge
 ```
 
-Write, validate, install, and run post-install checks:
+Apply after review:
 
 ```powershell
-.\tools\generate-install-manifest.ps1 -ConfigPath .\.agent-routines\install-discovery.config.json -WriteManifest -Apply
+.\tools\generate-install-manifest.ps1 -ConfigPath .\.agent-routines\install-discovery.config.json -WriteManifest -Apply -ApplyMode merge
 ```
 
 ```bash
-./tools/generate-install-manifest.sh --config-path ./.agent-routines/install-discovery.config.json --write-manifest --apply
+./tools/generate-install-manifest.sh --config-path ./.agent-routines/install-discovery.config.json --write-manifest --apply --mode merge
 ```
 
-Use `-Force` or `--force` only after reviewing the plan. Force replacement is passed through to the existing manifest installers.
+Supported apply modes:
 
-## Scope Inference
+- `dry-run`: no target writes.
+- `merge`: install missing items and skip existing targets.
+- `replace-listed`: back up and replace listed desired targets.
+- `sync-prune`: back up and prune managed known routine targets that are outside desired state.
 
-Policy is the source of desired scope. Installed state is evidence and migration input.
+`replace-listed` and `sync-prune` require an explicit current request and backup/restore plan.
 
-| Evidence | Result |
-| --- | --- |
-| Skill appears in `userLevelSkills` and exists in `skills/` | Add to each selected tool's user-level skill block. |
-| Skill appears in `projectLevelOnlySkills` | Never add it to user-level blocks. |
-| Project-level installed Skill exists in `skills/` | Add it to that project and tool block. |
-| Installed Skill or workflow does not exist in this source repo | Report as `unknownInstalledItems`; do not add it. |
-| Installed user-level Skill or workflow is not in the corresponding user-level policy | Report as `unclassifiedInstalledItems`; do not add it. |
-| Project already has `.codex`, `.claude`, or `.agent-routines` targets | Add existing project workflows and configured `projectDefaultWorkflows`. |
+## Manifest v2
 
-Workflow runtime directories are shared between Codex and Claude Code. To avoid duplicate copies to the same target, generated user-level and project-level workflow arrays are placed only under the first configured tool. Skills remain tool-specific.
+The generated manifest contains:
 
-## Output
+- `desiredTargets[]`
+- `actions[]`
+- `backupPlan`
+- `restorePlan`
+- `unknownInstalledItems[]`
+- `unclassifiedInstalledItems[]`
+- `summary`
 
-The plan JSON includes:
+Actions are one of `install`, `skip`, `replace`, or `prune-candidate`.
 
-- `discoveredProjects`
-- `scannedUserTargets`
-- `scannedProjectTargets`
-- `generatedManifest`
-- `unknownInstalledItems`
-- `unclassifiedInstalledItems`
-- `missingPolicyItems`
-- `conflicts`
-- `skippedProjects`
-- `installPlan`
-- `commandsToRun`
+Workflows are shared runtime targets. Skills are per-tool targets. Matrix cells outside the active desired state show `not-targeted`; they are not shared installs.
 
-Review conflicts and unknown items before applying the generated manifest.
+## Matrix Semantics
+
+Install Matrix aggregates only desired targets. Non-selected cells remain visible as `not-targeted` so operators can distinguish them from missing installs. Project Detail Matrix expands routine x project x tool and reports the concrete project path, target path, action, changed files, and missing files.
+
+Aggregation severity:
+
+`broken > unknown > drift > missing > same > shared > not-targeted`
+
+## Safety
+
+- Plan JSON shown in the app is readonly.
+- Apply is disabled when config is dirty, validation failed, digest mismatch is detected, backup is missing for destructive modes, or the confirmation phrase is wrong.
+- Unknown and unclassified installed items are never pruned automatically.
+- Apply runs check-install when `verifyAfterInstall` is enabled in the generated plan. Execution archives are written through the separate archive task flow.

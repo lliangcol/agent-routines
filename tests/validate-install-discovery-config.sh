@@ -48,7 +48,17 @@ import sys
 
 config_path = sys.argv[1]
 with open(config_path, "r", encoding="utf-8") as f:
-    config = json.load(f)
+    config_text = f.read()
+
+try:
+    config = json.loads(config_text)
+except json.JSONDecodeError as exc:
+    sys.stderr.write(f"Invalid JSON in install discovery config: {exc}\n")
+    if re.search(r'"[A-Za-z]:\\', config_text):
+        sys.stderr.write(
+            'Hint: JSON Windows paths must escape backslashes, for example "D:\\\\Repositories\\\\agent-config".\n'
+        )
+    raise SystemExit(1)
 
 errors = []
 name_re = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
@@ -78,8 +88,91 @@ def string_array(value, context, require_kebab=False, allow_missing=False, requi
             errors.append(f"{context} contains invalid kebab-case name: {item}")
 
 
-if config.get("version") != 1:
-    errors.append("Install discovery config version must be 1.")
+def tools(value, context):
+    string_array(value.get("tools") if isinstance(value, dict) else None, f"{context}.tools", require_non_empty=True)
+    for tool in (value.get("tools") if isinstance(value, dict) and isinstance(value.get("tools"), list) else []):
+        if tool not in ("codex", "claudeCode"):
+            errors.append(f"{context}.tools contains unsupported tool: {tool}")
+
+
+def skill_selection(value, context):
+    if not isinstance(value, dict):
+        errors.append(f"{context} is required.")
+        return
+    string_array(value.get("codex"), f"{context}.codex", True)
+    string_array(value.get("claudeCode"), f"{context}.claudeCode", True)
+
+
+def project_target(value, context, require_path=False):
+    if not isinstance(value, dict):
+        errors.append(f"{context} is required.")
+        return
+    if require_path and (not isinstance(value.get("path"), str) or not value["path"].strip()):
+        errors.append(f"{context}.path is required.")
+    for name in ("enabled", "createTargets"):
+        if not isinstance(value.get(name), bool):
+            errors.append(f"{context}.{name} must be boolean.")
+    if value.get("mode") not in ("merge", "replace-listed"):
+        errors.append(f"{context}.mode must be merge or replace-listed.")
+    tools(value, context)
+    skill_selection(value.get("skills"), f"{context}.skills")
+    string_array(value.get("workflows"), f"{context}.workflows", True)
+
+
+if config.get("version") not in (1, 2):
+    errors.append("Install discovery config version must be 1 or 2.")
+
+if config.get("version") == 2:
+    for forbidden in ("force", "pruneUnlisted", "defaultMode"):
+        if forbidden in config:
+            errors.append(f"Config v2 cannot contain destructive apply switch: {forbidden}")
+    user_targets = config.get("userTargets")
+    if not isinstance(user_targets, dict):
+        errors.append("userTargets is required.")
+    else:
+        if not isinstance(user_targets.get("enabled"), bool):
+            errors.append("userTargets.enabled must be boolean.")
+        tools(user_targets, "userTargets")
+        skill_selection(user_targets.get("skills"), "userTargets.skills")
+        string_array(user_targets.get("workflows"), "userTargets.workflows", True)
+    project_target(config.get("projectDefaults"), "projectDefaults")
+    project_targets = config.get("projectTargets")
+    if not isinstance(project_targets, list):
+        errors.append("projectTargets must be an array.")
+    else:
+        for index, target in enumerate(project_targets):
+            project_target(target, f"projectTargets[{index}]", True)
+    discovery = config.get("discovery")
+    if not isinstance(discovery, dict):
+        errors.append("discovery is required.")
+    else:
+        string_array(discovery.get("roots"), "discovery.roots")
+        string_array(discovery.get("excludeDirs"), "discovery.excludeDirs")
+        max_depth = discovery.get("maxDepth")
+        if isinstance(max_depth, bool) or not isinstance(max_depth, int) or max_depth < 0:
+            errors.append("discovery.maxDepth must be an integer >= 0.")
+        if not isinstance(discovery.get("skipNestedRepos"), bool):
+            errors.append("discovery.skipNestedRepos must be boolean.")
+    promotion_rules = config.get("promotionRules") or {}
+    string_array(promotion_rules.get("doNotPromoteToUserSkills"), "promotionRules.doNotPromoteToUserSkills", True)
+    apply_safety = config.get("applySafety") or {}
+    if apply_safety.get("unknownInstalledItems") != "report-only":
+        errors.append("applySafety.unknownInstalledItems must be report-only.")
+    for forbidden in ("force", "pruneUnlisted", "defaultMode"):
+        if forbidden in apply_safety:
+            errors.append(f"applySafety cannot contain destructive apply switch: {forbidden}")
+    output = config.get("output")
+    if output is None:
+        errors.append("output is required.")
+    else:
+        for name in ("manifestPath", "reportPath"):
+            value = output.get(name)
+            if not isinstance(value, str) or not value.strip():
+                errors.append(f"output.{name} is required and must be a string.")
+    if errors:
+        sys.stderr.write("\n".join(errors) + "\n")
+        raise SystemExit(1)
+    raise SystemExit(0)
 
 tools = config.get("tools")
 string_array(tools, "tools", require_non_empty=True)
@@ -88,7 +181,9 @@ if isinstance(tools, list):
         if tool not in ("codex", "claudeCode"):
             errors.append(f"Unsupported tool: {tool}")
 
-string_array(config.get("projectRoots"), "projectRoots")
+project_roots = config.get("projectRoots")
+string_array(project_roots, "projectRoots")
+known_project_roots = set(project_roots or []) if isinstance(project_roots, list) else set()
 
 discovery = config.get("projectDiscovery") or {}
 if discovery:
@@ -102,6 +197,29 @@ if discovery:
     skip_nested = discovery.get("skipNestedRepos")
     if skip_nested is not None and not isinstance(skip_nested, bool):
         errors.append("projectDiscovery.skipNestedRepos must be boolean when set.")
+    root_options = discovery.get("rootOptions")
+    if root_options is not None:
+        if not isinstance(root_options, list):
+            errors.append("projectDiscovery.rootOptions must be an array.")
+        else:
+            seen_root_options = set()
+            for index, option in enumerate(root_options):
+                context = f"projectDiscovery.rootOptions[{index}]"
+                if not isinstance(option, dict):
+                    errors.append(f"{context} must be an object.")
+                    continue
+                root = option.get("root")
+                if not isinstance(root, str) or not root.strip():
+                    errors.append(f"{context}.root contains an invalid string.")
+                else:
+                    if root in seen_root_options:
+                        errors.append(f"projectDiscovery.rootOptions contains duplicate root: {root}")
+                    seen_root_options.add(root)
+                    if root not in known_project_roots:
+                        errors.append(f"projectDiscovery.rootOptions references unknown project root: {root}")
+                option_skip_nested = option.get("skipNestedRepos")
+                if not isinstance(option_skip_nested, bool):
+                    errors.append(f"{context}.skipNestedRepos must be boolean when set.")
 
 policy = config.get("scopePolicy")
 if policy is None:

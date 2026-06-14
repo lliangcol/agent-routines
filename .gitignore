@@ -13,3 +13,6 @@ temp/
 *.tsbuildinfo
 apps/*/out/
 apps/*/release/
+apps/*/dist/
+apps/*/test-results/
+apps/*/playwright-report/

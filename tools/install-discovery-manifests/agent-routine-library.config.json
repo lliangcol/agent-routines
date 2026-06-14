@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "userTargets": {
+    "enabled": false,
+    "tools": ["codex", "claudeCode"],
+    "skills": {
+      "codex": [],
+      "claudeCode": []
+    },
+    "workflows": []
+  },
+  "projectDefaults": {
+    "enabled": true,
+    "tools": ["codex", "claudeCode"],
+    "skills": {
+      "codex": ["guarded-change", "review-loop", "prompt-qa", "graph-audit", "governance-audit"],
+      "claudeCode": ["guarded-change", "review-loop", "prompt-qa", "graph-audit", "governance-audit"]
+    },
+    "workflows": ["preflight", "gate-check", "governance-check", "graph-check", "doc-check"],
+    "createTargets": false,
+    "mode": "merge"
+  },
+  "projectTargets": [
+    {
+      "path": "REPLACE_WITH_AGENT_ROUTINE_LIBRARY_PROJECT_PATH",
+      "enabled": true,
+      "tools": ["codex", "claudeCode"],
+      "skills": {
+        "codex": ["guarded-change", "review-loop", "prompt-qa", "graph-audit", "governance-audit"],
+        "claudeCode": ["guarded-change", "review-loop", "prompt-qa", "graph-audit", "governance-audit"]
+      },
+      "workflows": ["preflight", "gate-check", "governance-check", "graph-check", "doc-check"],
+      "createTargets": false,
+      "mode": "merge"
+    }
+  ],
+  "discovery": {
+    "roots": [],
+    "maxDepth": 0,
+    "excludeDirs": [".git", "node_modules", "vendor", "dist", "build", "target", ".tmp", ".cache", "tmp", "temp", ".agent-routines", ".codex", ".claude"],
+    "skipNestedRepos": true,
+    "rootOptions": []
+  },
+  "promotionRules": {
+    "doNotPromoteToUserSkills": ["api-sync", "dms-repair", "node-workspace-release", "pay-docs"]
+  },
+  "output": {
+    "manifestPath": ".agent-routines/generated/agent-routine-library.install.manifest.json",
+    "reportPath": ".agent-routines/generated/agent-routine-library.install.plan.json"
+  },
+  "applySafety": {
+    "unknownInstalledItems": "report-only"
+  }
+}

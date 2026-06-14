@@ -14,7 +14,7 @@
 
 跨项目复用时，可以在用户级安装 manifest 中的通用 Skills：guarded-change、review-loop、merge-fix、env-audit、runtime-repair、commit-guard、prompt-qa、release-guard、security-review、github-guard 和 graph-audit。项目特定行为应在审阅目标仓库规则后再安装到项目级。
 
-大范围安装或重新安装前，应先运行安装器 dry-run 并审阅目标清单。PowerShell 安装器使用 `-WhatIf`；Bash 安装器使用 `--dry-run`。Dry-run 模式不得创建目标目录、复制文件、删除文件或替换已安装内容。
+大范围安装或重新安装前，应先运行安装器 dry-run 并审阅目标清单。PowerShell 安装器使用 `-WhatIf`；Bash 安装器使用 `--dry-run`。多项目分发优先使用 install discovery config v2，并在 Apply 前审阅生成的 `actions[]`。Dry-run 模式不得创建目标目录、复制文件、删除文件或替换已安装内容。
 
 改动前可以用领域 workflows 做只读探测：
 

@@ -50,6 +50,9 @@ adapters/common/install-manifest.sh
 apps/agent-routines-manager/eslint.config.js
 apps/agent-routines-manager/package-lock.json
 apps/agent-routines-manager/package.json
+apps/agent-routines-manager/resources/icon-source.prompt.md
+apps/agent-routines-manager/resources/icon.ico
+apps/agent-routines-manager/resources/icon.png
 distribution/agent-routines.manifest.json
 docs/assets/electron-app-main-install-matrix.svg
 docs/assets/electron-app-main-install-matrix-preview.png
@@ -65,6 +68,12 @@ docs/diagrams.md
 docs/diagrams.zh-CN.md
 docs/distribution.md
 docs/distribution.zh-CN.md
+docs/electron-app-distribution-guide-ui.md
+docs/electron-app-distribution-guide-ui.zh-CN.md
+docs/electron-app-install-tutorial.md
+docs/electron-app-install-tutorial.zh-CN.md
+docs/electron-app-manual-test-cases.md
+docs/electron-app-manual-test-cases.zh-CN.md
 docs/electron-app-plan.md
 docs/electron-app-plan.zh-CN.md
 docs/electron-app-prerequisites.md
@@ -75,6 +84,8 @@ docs/examples.md
 docs/examples.zh-CN.md
 docs/install-discovery.md
 docs/install-discovery.zh-CN.md
+docs/install-discovery-manifest-templates.md
+docs/install-discovery-manifest-templates.zh-CN.md
 docs/naming.md
 docs/naming.zh-CN.md
 docs/release-process.md
@@ -111,6 +122,7 @@ skills/release-guard/SKILL.md
 skills/review-loop/SKILL.md
 skills/runtime-repair/SKILL.md
 skills/security-review/SKILL.md
+tests/fixtures/install-discovery.v1.config.json
 tests/required-paths.txt
 tests/run-workflows.ps1
 tests/run-workflows.sh
@@ -120,6 +132,7 @@ tests/validate-docs.ps1
 tests/validate-docs.sh
 tests/validate-install-discovery-config.ps1
 tests/validate-install-discovery-config.sh
+tests/validate-install-discovery-powershell-regression.ps1
 tests/validate-manifest.ps1
 tests/validate-manifest.sh
 tests/validate-skills.ps1
@@ -131,6 +144,14 @@ tests/validate-workflows.sh
 tools/generate-install-manifest.ps1
 tools/generate-install-manifest.sh
 tools/install-discovery.config.example.json
+tools/install-discovery-manifests/agent-routine-library.config.json
+tools/install-discovery-manifests/desktop-electron-app.config.json
+tools/install-discovery-manifests/documentation-knowledge-base.config.json
+tools/install-discovery-manifests/java-maven-service.config.json
+tools/install-discovery-manifests/node-workspace.config.json
+tools/install-discovery-manifests/python-tooling.config.json
+tools/install-discovery-manifests/workstation-config.config.json
+tools/install-discovery-plan.py
 workflows/archive-check/archive-check.ps1
 workflows/archive-check/archive-check.sh
 workflows/archive-check/examples/sample-output.json

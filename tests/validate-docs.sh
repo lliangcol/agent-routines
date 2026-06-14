@@ -2,7 +2,7 @@
 set -euo pipefail
 if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
   printf 'Usage: ./tests/validate-docs.sh\n'
-  printf 'Checks bilingual doc pairing in docs/ and catalog consistency against SKILL.md.\n'
+  printf 'Checks bilingual doc pairing in docs/, catalog consistency, and examples coverage.\n'
   exit 0
 fi
 root="$(cd "$(dirname "$0")/.." && pwd -P)"
@@ -20,6 +20,25 @@ for f in "$root"/docs/*.md; do
       [ -f "$root/docs/$zh" ] || errors+=("Missing zh-CN counterpart for docs/$base")
       ;;
   esac
+done
+
+stale_phrases=(
+  "Force Apply"
+  "FORCE APPLY"
+  "Plan JSON remains editable"
+  "Inventory > 2 Targets"
+  "Inventory, Targets, Policy"
+  "Current Electron App discovery behavior"
+  "generated project blocks"
+  "current source repo"
+)
+for f in "$root"/docs/*.md; do
+  base="$(basename "$f")"
+  for phrase in "${stale_phrases[@]}"; do
+    if grep -Fq "$phrase" "$f"; then
+      errors+=("Stale doc phrase in docs/$base: $phrase")
+    fi
+  done
 done
 
 if command -v python3 >/dev/null 2>&1; then
@@ -115,6 +134,54 @@ for catalog, none_skill_cell, none_wf_cell in [
     for workflow in sorted(set(workflows) - seen_workflows):
         errors.append(f"{catalog}: missing workflows table row: {workflow}")
 
+for example_file in ["docs/examples.md", "docs/examples.zh-CN.md"]:
+    path = root / example_file
+    if not path.is_file():
+        errors.append(f"Missing examples file: {example_file}")
+        continue
+    section = None
+    seen_skills = set()
+    seen_workflows = set()
+    for line in path.read_text(encoding="utf-8").split("\n"):
+        if line.startswith("## "):
+            if "Workflow" in line:
+                section = "workflows"
+            elif "Skill" in line:
+                section = "skills"
+            else:
+                section = None
+            continue
+        if not line.startswith("| `"):
+            continue
+        cells = line.split("|")
+        name = cells[1].strip().strip("`")
+        if section == "skills":
+            if name not in rec:
+                errors.append(f"{example_file}: skill example row for unknown skill: {name}")
+                continue
+            seen_skills.add(name)
+        elif section == "workflows":
+            if name not in workflows:
+                errors.append(f"{example_file}: workflow example row for unknown workflow: {name}")
+                continue
+            seen_workflows.add(name)
+            expected_ps = f".\\workflows\\{name}\\{name}.ps1 -Path ."
+            expected_sh = f"./workflows/{name}/{name}.sh --path ."
+            actual_ps = cells[2].strip().strip("`")
+            actual_sh = cells[3].strip().strip("`")
+            if actual_ps != expected_ps:
+                errors.append(
+                    f"{example_file}: workflow {name} PowerShell example is {actual_ps!r}, expected {expected_ps!r}"
+                )
+            if actual_sh != expected_sh:
+                errors.append(
+                    f"{example_file}: workflow {name} Bash example is {actual_sh!r}, expected {expected_sh!r}"
+                )
+    for skill in sorted(set(rec) - seen_skills):
+        errors.append(f"{example_file}: missing skill example row: {skill}")
+    for workflow in sorted(set(workflows) - seen_workflows):
+        errors.append(f"{example_file}: missing workflow example row: {workflow}")
+
 if errors:
     sys.stderr.write("\n".join(errors) + "\n")
     raise SystemExit(1)
@@ -126,4 +193,4 @@ fi
 if [ "${#errors[@]}" -gt 0 ] || [ "$catalog_ok" != true ]; then
   exit 1
 fi
-printf 'validate-docs: ok (bilingual pairing and catalog consistency)\n'
+printf 'validate-docs: ok (bilingual pairing, catalog consistency, and examples coverage)\n'

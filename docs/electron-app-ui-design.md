@@ -18,7 +18,7 @@ Optimized reference coverage:
 
 - Native desktop window frame, fixed left navigation, view command bar, main matrix work surface, right detail drawer, and always-visible status bar.
 - Install Matrix as the first visual priority, with seven representative routines across five install targets.
-- Every matrix status uses icon plus text: `same`, `drift`, `missing`, and `shared`.
+- Every matrix status uses icon plus text: `same`, `drift`, `missing`, `shared`, and `not-targeted`.
 - The selected-cell drawer includes write-safety context, per-target status, source path, changed files, recommended workflows, and gated actions.
 - The PNG preview is rendered from the SVG reference and should be regenerated when the SVG changes.
 
@@ -126,7 +126,7 @@ Use neutral, low-saturation productivity colors with clear status accents.
 | `status.ok` | `#1f7a4d` | `#5fc489` | `same`, success |
 | `status.warning` | `#9a6200` | `#e0b45a` | `drift`, warnings |
 | `status.error` | `#b42318` | `#ff867c` | `broken`, failures |
-| `status.neutral` | `#6b7280` | `#a1a8b3` | `missing`, `unknown`, idle |
+| `status.neutral` | `#6b7280` | `#a1a8b3` | `unknown`, `shared`, `not-targeted`, idle |
 
 Typography:
 
@@ -218,12 +218,12 @@ Purpose: main work view for source-to-target drift and install readiness.
 +----------------------------+-----------+-----------+-----------+---------------+
 | Routine                    | Codex user| Codex proj| Claude user| Workflow rt  |
 +----------------------------+-----------+-----------+-----------+---------------+
-| electron-app-builder       | same      | missing   | same       | shared        |
-| desktop-design-system      | drift     | missing   | same       | shared        |
+| electron-app-builder       | same      | missing   | same       | not-targeted  |
+| desktop-design-system      | drift     | missing   | same       | not-targeted  |
 | node-workspace-check       | shared    | shared    | shared     | same          |
 | runtime-check              | shared    | shared    | shared     | same          |
 +----------------------------+-----------+-----------+-----------+---------------+
-| Legend: [same] [drift] [broken] [missing] [unknown] [shared]                  |
+| Legend: [same] [drift] [broken] [missing] [unknown] [shared] [not-targeted]   |
 +--------------------------------------------------------------------------------+
 ```
 
@@ -251,6 +251,8 @@ Interactions:
 - `Refresh scan` is readonly and may run while no write task is active.
 - Status pills include icon plus translated text. Internal status keys remain stable.
 - `unknown` targets are visible but never auto-removed.
+- `not-targeted` means the active config did not select that routine for that target; it must not be shown as `shared`.
+- `shared` is reserved for workflows represented by the shared workflow runtime target.
 
 ### Projects
 
@@ -266,7 +268,8 @@ Purpose: maintain reviewed roots for project-level discovery without scanning th
 +------------------------------------------------------------------------------+
 | Project preview                                                               |
 | discovered path              tool targets        warnings                     |
-| D:\Repositories\agent-routines Codex, Claude     current source repo          |
+| D:\Repositories\agent-routines Codex, Claude     selected project target      |
+| D:\Work\Projects\example      Codex            discovered, not enabled        |
 +------------------------------------------------------------------------------+
 ```
 
@@ -286,7 +289,7 @@ Purpose: edit distribution policy with validation before plan generation.
 +------------------------------------------------------------------------------+
 | Policy                                      [Validate] [Save config as...]    |
 +------------------------------------------------------------------------------+
-| [User-level Skills] [Project-only Skills] [User Workflows] [Project Workflows]|
+| [User-level Skills] [Do-not-promote Skills] [User Workflows] [Project Workflows]|
 +------------------------------------------------------------------------------+
 | Available routines             | Selected policy                              |
 | [ ] electron-app-builder       | [x] guarded-change                           |
@@ -312,17 +315,18 @@ Purpose: the only safe write path for manifest and install distribution.
 ```text
 +--------------------------------------------------------------------------------+
 | Distribute                                                                      |
-| Stepper: 1 Inventory > 2 Targets > 3 Policy > 4 Plan > 5 Apply                 |
+| Stepper: 1 Scope > 2 Routines > 3 Review Targets > 4 Mode > 5 Run > 6 Result   |
 +--------------------------------------------------------------------------------+
 | Step content                                              | Gate checklist      |
 |                                                           | [ok] config valid   |
-| 1 Inventory: source counts and source validation          | [ok] plan generated |
-| 2 Targets: user/project targets by tool                   | [ ] manifest review |
-| 3 Policy: selected scopes                                 | [ ] confirmation    |
-| 4 Plan: dry-run JSON, commandsToRun, manifest diff        |                     |
-| 5 Apply: final confirmation, no force by default          |                     |
+| 1 Scope: selected distribution scope                      | [ok] plan generated |
+| 2 Routines: selected Skills and workflows                 | [ ] manifest review |
+| 3 Review Targets: user/project targets by tool            | [ ] confirmation    |
+| 4 Mode: dry-run, merge, replace-listed, sync-prune        |                     |
+| 5 Run: dry-run JSON, commandsToRun, manifest diff         |                     |
+| 6 Result: final confirmation and result counts            |                     |
 +--------------------------------------------------------------------------------+
-| [Back] [Generate dry-run plan] [Write manifest] [Apply] [Force Apply]          |
+| [Back] [Generate dry-run plan] [Write manifest] [Apply selected mode]          |
 +--------------------------------------------------------------------------------+
 ```
 
@@ -358,11 +362,11 @@ Confirmation dialog:
 Interactions:
 
 - `Apply` remains disabled until config validation, dry-run plan generation, and manifest review are complete.
-- `Force Apply` is hidden until an operator reveals advanced actions and then requires a second confirmation.
+- `replace-listed` and `sync-prune` require exact confirmation phrases and backup/restore plans.
 - Wizard steps can move backward without losing state.
 - Any config edit invalidates downstream plan and apply readiness.
 - Failed apply opens Task Center with failed command, stdout, stderr, and exit code.
-- Successful apply offers `Run install check` and `Write archive`.
+- Successful apply exposes check-install output when verification ran and keeps task evidence available for the archive flow.
 
 ### Validation
 
@@ -398,7 +402,7 @@ Purpose: global queue, logs, cancellation, and archive evidence.
 
 ```text
 +--------------------------------------------------------------------------------+
-| Task Center                                  [Clear completed] [Open archive]   |
+| Task Center                                                   [Clear completed] |
 +-------------------------------+------------------------------------------------+
 | Queue                         | Log inspector                                  |
 | running generateInstallPlan   | command: tools\generate-install-manifest.ps1   |
@@ -406,7 +410,7 @@ Purpose: global queue, logs, cancellation, and archive evidence.
 | succeeded inventory.scan      | stdout                                         |
 | failed runRepositoryGate      | stderr                                         |
 +-------------------------------+------------------------------------------------+
-| Task evidence: command metadata, duration, exit code, artifacts, archive offer |
+| Task evidence: command metadata, duration, exit code, stdout, stderr, artifacts |
 +--------------------------------------------------------------------------------+
 ```
 
@@ -416,7 +420,7 @@ Interactions:
 - Readonly tasks may queue behind writes when they depend on write results.
 - `Cancel` is available only when the subprocess can be terminated safely.
 - Completed task rows remain until cleared or app restart, depending on local settings.
-- Archive offer appears after successful apply and after requested dry-run evidence capture.
+- Archive writing is a separate confirmed archive flow using selected task evidence.
 
 ### Docs
 
@@ -505,7 +509,7 @@ Interactions:
 
 - Disabled buttons must show a tooltip or inline reason.
 - `Apply` disabled reasons include config invalid, plan missing, manifest not reviewed, write task running, or confirmation missing.
-- `Force Apply` disabled reasons include advanced action hidden, force confirmation missing, or policy forbids replacement.
+- Destructive mode disabled reasons include confirmation missing, backup missing, digest mismatch, or policy forbids replacement.
 
 ### Error Handling
 
@@ -521,8 +525,8 @@ Interactions:
 | Generate dry-run plan | No confirmation |
 | Write manifest | Confirmation required |
 | Apply distribution | Confirmation required |
-| Force apply distribution | Advanced reveal plus typed or checkbox confirmation |
-| Write archive | Confirmation required unless the operator enabled archive in the success prompt |
+| Replace listed / sync prune | Exact typed phrase plus backup/restore plan confirmation |
+| Write archive | Confirmation required |
 | Reset local settings | Confirmation required |
 
 ### Keyboard And Accessibility
@@ -552,7 +556,7 @@ Text handling:
 ## Implementation Acceptance Checklist
 
 - The first implemented screen is the app shell plus Install Matrix, not a landing page.
-- All navigation items exist even if some routes initially show an implementation placeholder.
+- All navigation items render real working views; placeholder-only routes are not acceptable for acceptance.
 - Install Matrix, Distribute Wizard, Validation, Task Center, Settings, Dashboard, and Docs match this document before visual QA.
 - Light, dark, and system themes use the listed token categories.
 - English and Simplified Chinese labels use translation keys and can switch without restart.

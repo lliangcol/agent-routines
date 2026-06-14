@@ -18,7 +18,7 @@
 
 - 原生桌面窗口框架、固定左侧导航、视图命令栏、主矩阵工作区、右侧详情抽屉和始终可见的状态栏。
 - 以 Install Matrix 作为第一视觉优先级，用七个代表性 routine 覆盖五类安装目标。
-- 每个矩阵状态都使用图标加文本：`same`、`drift`、`missing` 和 `shared`。
+- 每个矩阵状态都使用图标加文本：`same`、`drift`、`missing`、`shared` 和 `not-targeted`。
 - 选中单元格抽屉包含写入安全上下文、逐目标状态、源路径、变更文件、推荐 workflow 和受门禁保护的操作。
 - PNG 预览由 SVG 参考图渲染生成；SVG 变化时应同步重新生成 PNG。
 
@@ -126,7 +126,7 @@ flowchart LR
 | `status.ok` | `#1f7a4d` | `#5fc489` | `same`、成功 |
 | `status.warning` | `#9a6200` | `#e0b45a` | `drift`、警告 |
 | `status.error` | `#b42318` | `#ff867c` | `broken`、失败 |
-| `status.neutral` | `#6b7280` | `#a1a8b3` | `missing`、`unknown`、idle |
+| `status.neutral` | `#6b7280` | `#a1a8b3` | `unknown`、`shared`、`not-targeted`、idle |
 
 字体：
 
@@ -218,12 +218,12 @@ flowchart LR
 +----------------------------+-----------+-----------+-----------+---------------+
 | Routine                    | Codex user| Codex proj| Claude user| Workflow rt  |
 +----------------------------+-----------+-----------+-----------+---------------+
-| electron-app-builder       | same      | missing   | same       | shared        |
-| desktop-design-system      | drift     | missing   | same       | shared        |
+| electron-app-builder       | same      | missing   | same       | not-targeted  |
+| desktop-design-system      | drift     | missing   | same       | not-targeted  |
 | node-workspace-check       | shared    | shared    | shared     | same          |
 | runtime-check              | shared    | shared    | shared     | same          |
 +----------------------------+-----------+-----------+-----------+---------------+
-| Legend: [same] [drift] [broken] [missing] [unknown] [shared]                  |
+| Legend: [same] [drift] [broken] [missing] [unknown] [shared] [not-targeted]   |
 +--------------------------------------------------------------------------------+
 ```
 
@@ -251,6 +251,8 @@ flowchart LR
 - `Refresh scan` 是只读操作，可在无写任务运行时执行。
 - 状态 pill 包含图标和翻译文本。内部状态 key 保持稳定。
 - `unknown` 目标可见，但绝不自动删除。
+- `not-targeted` 表示当前配置没有为该 routine 选择这个目标；不得显示成 `shared`。
+- `shared` 只保留给由共享 workflow runtime target 承载的 workflows。
 
 ### Projects
 
@@ -266,7 +268,8 @@ flowchart LR
 +------------------------------------------------------------------------------+
 | Project preview                                                               |
 | discovered path              tool targets        warnings                     |
-| D:\Repositories\agent-routines Codex, Claude     current source repo          |
+| D:\Repositories\agent-routines Codex, Claude     selected project target      |
+| D:\Work\Projects\example      Codex            discovered, not enabled        |
 +------------------------------------------------------------------------------+
 ```
 
@@ -286,7 +289,7 @@ flowchart LR
 +------------------------------------------------------------------------------+
 | Policy                                      [Validate] [Save config as...]    |
 +------------------------------------------------------------------------------+
-| [User-level Skills] [Project-only Skills] [User Workflows] [Project Workflows]|
+| [User-level Skills] [Do-not-promote Skills] [User Workflows] [Project Workflows]|
 +------------------------------------------------------------------------------+
 | Available routines             | Selected policy                              |
 | [ ] electron-app-builder       | [x] guarded-change                           |
@@ -312,17 +315,18 @@ flowchart LR
 ```text
 +--------------------------------------------------------------------------------+
 | Distribute                                                                      |
-| Stepper: 1 Inventory > 2 Targets > 3 Policy > 4 Plan > 5 Apply                 |
+| Stepper: 1 Scope > 2 Routines > 3 Review Targets > 4 Mode > 5 Run > 6 Result   |
 +--------------------------------------------------------------------------------+
 | Step content                                              | Gate checklist      |
 |                                                           | [ok] config valid   |
-| 1 Inventory: source counts and source validation          | [ok] plan generated |
-| 2 Targets: user/project targets by tool                   | [ ] manifest review |
-| 3 Policy: selected scopes                                 | [ ] confirmation    |
-| 4 Plan: dry-run JSON, commandsToRun, manifest diff        |                     |
-| 5 Apply: final confirmation, no force by default          |                     |
+| 1 Scope: selected distribution scope                      | [ok] plan generated |
+| 2 Routines: selected Skills and workflows                 | [ ] manifest review |
+| 3 Review Targets: user/project targets by tool            | [ ] confirmation    |
+| 4 Mode: dry-run, merge, replace-listed, sync-prune        |                     |
+| 5 Run: dry-run JSON, commandsToRun, manifest diff         |                     |
+| 6 Result: final confirmation and result counts            |                     |
 +--------------------------------------------------------------------------------+
-| [Back] [Generate dry-run plan] [Write manifest] [Apply] [Force Apply]          |
+| [Back] [Generate dry-run plan] [Write manifest] [Apply selected mode]          |
 +--------------------------------------------------------------------------------+
 ```
 
@@ -358,11 +362,11 @@ flowchart LR
 交互：
 
 - config 校验、dry-run plan 生成和 manifest review 完成前，`Apply` 保持禁用。
-- `Force Apply` 默认隐藏；操作者显式展开 advanced actions 后仍需二次确认。
+- `replace-listed` 和 `sync-prune` 需要精确确认短语和 backup/restore plan。
 - Wizard 可向后移动且不丢失状态。
 - 任何 config 编辑都会使下游 plan 和 apply readiness 失效。
 - apply 失败时打开 Task Center，并展示失败命令、stdout、stderr 和 exit code。
-- apply 成功后提供 `Run install check` 和 `Write archive`。
+- apply 成功后，如果已运行验证，则展示 check-install 输出，并保留可用于归档流程的任务证据。
 
 ### Validation
 
@@ -398,7 +402,7 @@ flowchart LR
 
 ```text
 +--------------------------------------------------------------------------------+
-| Task Center                                  [Clear completed] [Open archive]   |
+| Task Center                                                   [Clear completed] |
 +-------------------------------+------------------------------------------------+
 | Queue                         | Log inspector                                  |
 | running generateInstallPlan   | command: tools\generate-install-manifest.ps1   |
@@ -406,7 +410,7 @@ flowchart LR
 | succeeded inventory.scan      | stdout                                         |
 | failed runRepositoryGate      | stderr                                         |
 +-------------------------------+------------------------------------------------+
-| Task evidence: command metadata, duration, exit code, artifacts, archive offer |
+| Task evidence: command metadata, duration, exit code, stdout, stderr, artifacts |
 +--------------------------------------------------------------------------------+
 ```
 
@@ -416,7 +420,7 @@ flowchart LR
 - 如果只读任务依赖写入结果，则排在写任务之后。
 - 只有能安全终止子进程时才提供 `Cancel`。
 - 已完成任务行保留到清理或应用重启，具体由本地设置决定。
-- 成功 apply 后，或请求 dry-run 证据捕获后，显示 archive offer。
+- 归档写入是独立受确认的 archive flow，使用选中的任务证据。
 
 ### Docs
 
@@ -505,7 +509,7 @@ flowchart LR
 
 - 禁用按钮必须显示 tooltip 或 inline reason。
 - `Apply` 禁用原因包括 config invalid、plan missing、manifest not reviewed、write task running 或 confirmation missing。
-- `Force Apply` 禁用原因包括 advanced action hidden、force confirmation missing 或 policy forbids replacement。
+- 破坏性模式禁用原因包括 confirmation missing、backup missing、digest mismatch 或 policy forbids replacement。
 
 ### 错误处理
 
@@ -521,8 +525,8 @@ flowchart LR
 | Generate dry-run plan | 不需要确认 |
 | Write manifest | 需要确认 |
 | Apply distribution | 需要确认 |
-| Force apply distribution | Advanced reveal 加 typed 或 checkbox confirmation |
-| Write archive | 需要确认，除非操作者在成功提示中启用 archive |
+| Replace listed / sync prune | 精确输入确认短语，并确认 backup/restore plan |
+| Write archive | 需要确认 |
 | Reset local settings | 需要确认 |
 
 ### 键盘与可访问性
@@ -552,7 +556,7 @@ flowchart LR
 ## 实现验收清单
 
 - 第一个实现界面是 app shell 加 Install Matrix，不是 landing page。
-- 所有导航项都存在，即使部分 route 初期只显示 implementation placeholder。
+- 所有导航项都必须渲染真实工作视图；仅显示 placeholder 的 route 不能通过验收。
 - Install Matrix、Distribute Wizard、Validation、Task Center、Settings、Dashboard 和 Docs 在视觉 QA 前匹配本文档。
 - 浅色、深色和随系统主题使用本文列出的 token 类别。
 - 英文和简体中文 label 使用翻译 key，并可不重启切换。

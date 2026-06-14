@@ -115,8 +115,9 @@ The app must call existing repository entrypoints:
 | Validate config | `tests\validate-install-discovery-config.ps1 -ConfigPath <path>` | `tests/validate-install-discovery-config.sh --config-path <path>` |
 | Generate plan | `tools\generate-install-manifest.ps1 -ConfigPath <path>` | `tools/generate-install-manifest.sh --config-path <path>` |
 | Write manifest | `tools\generate-install-manifest.ps1 -ConfigPath <path> -WriteManifest` | `tools/generate-install-manifest.sh --config-path <path> --write-manifest` |
-| Apply distribution | `tools\generate-install-manifest.ps1 -ConfigPath <path> -WriteManifest -Apply` | `tools/generate-install-manifest.sh --config-path <path> --write-manifest --apply` |
-| Force apply | Same as apply plus `-Force` | Same as apply plus `--force` |
+| Apply merge | `tools\generate-install-manifest.ps1 -ConfigPath <path> -WriteManifest -Apply -ApplyMode merge` | `tools/generate-install-manifest.sh --config-path <path> --write-manifest --apply --mode merge` |
+| Replace listed | `tools\generate-install-manifest.ps1 -ConfigPath <path> -WriteManifest -Apply -ApplyMode replace-listed` | `tools/generate-install-manifest.sh --config-path <path> --write-manifest --apply --mode replace-listed` |
+| Sync prune | `tools\generate-install-manifest.ps1 -ConfigPath <path> -WriteManifest -Apply -ApplyMode sync-prune` | `tools/generate-install-manifest.sh --config-path <path> --write-manifest --apply --mode sync-prune` |
 | Repository gates | All validators from `AGENTS.md` | All validators from `AGENTS.md` |
 
 The renderer may preview `commandsToRun` from the plan, but execution must always route through the main-process allowlist.
@@ -131,7 +132,7 @@ The main process must register command IDs with fixed executable paths, fixed ar
 | `generateInstallPlan` | No | No | `configPath` |
 | `writeManifest` | Yes, repository manifest/report paths from generator output | Required | `configPath` |
 | `applyDistribution` | Yes, install targets from reviewed manifest | Required | `configPath` |
-| `forceApplyDistribution` | Yes, replaces listed install targets | Extra confirmation | `configPath` |
+| `destructiveApplyDistribution` | Yes, replace-listed or sync-prune target changes | Exact destructive phrase plus backup/restore plan | `configPath`, `mode`, `confirmationText`, `manifestDigest` |
 | `runRepositoryGate` | No | No | `gateId`, `shell` |
 | `checkInstallTarget` | No | No | `tool`, `scope`, optional `projectPath` |
 
@@ -154,7 +155,7 @@ type PlatformKind = "windows" | "macos" | "linux";
 type ThemeMode = "light" | "dark" | "system";
 type LanguageCode = "en" | "zh-CN";
 type RoutineKind = "skill" | "workflow";
-type InstallStatus = "same" | "drift" | "broken" | "missing" | "unknown" | "shared";
+type InstallStatus = "same" | "drift" | "broken" | "missing" | "unknown" | "shared" | "not-targeted";
 type TaskState = "pending" | "running" | "succeeded" | "failed" | "canceled";
 
 interface RoutineItem {
@@ -235,6 +236,7 @@ Show user-level and project-level targets across Codex, Claude Code, and shared 
 - `missing`: policy requires the item but it is not installed.
 - `unknown`: target exists but the source repository has no matching item.
 - `shared`: workflow runtime is shared instead of copied per tool.
+- `not-targeted`: active config does not select this routine for this target.
 
 Clicking a cell opens source path, target path, file-level comparison, and suggested actions.
 
@@ -246,10 +248,10 @@ Edit project roots, discovery depth, excluded directories, and nested repo behav
 
 Edit:
 
-- `scopePolicy.userLevelSkills`
-- `scopePolicy.projectLevelOnlySkills`
-- `scopePolicy.userLevelWorkflows`
-- `scopePolicy.projectDefaultWorkflows`
+- `userTargets`
+- `projectDefaults`
+- `projectTargets`
+- `promotionRules.doNotPromoteToUserSkills`
 
 Validate duplicate names, invalid names, and missing source folders before plan generation.
 
@@ -257,13 +259,14 @@ Validate duplicate names, invalid names, and missing source folders before plan 
 
 Use a gated flow:
 
-1. Inventory
-2. Targets
-3. Policy
-4. Plan
-5. Apply
+1. Choose Scope
+2. Select Routines
+3. Review Targets
+4. Apply Mode
+5. Run & Verify
+6. Result
 
-`Apply` must be disabled until config validation and plan generation pass. `Force Apply` must require an additional confirmation.
+`Apply` must be disabled until config validation and plan generation pass. `replace-listed` and `sync-prune` require exact confirmation phrases and backup/restore plans.
 
 ### Validation
 
@@ -330,7 +333,7 @@ Implementation rules:
 
 - Store UI text in translation keys, not inline strings.
 - Persist the selected language in local app settings.
-- Use stable status keys such as `same`, `drift`, `broken`, `missing`, `unknown`, and `shared`; translate display text separately.
+- Use stable status keys such as `same`, `drift`, `broken`, `missing`, `unknown`, `shared`, and `not-targeted`; translate display text separately.
 - Test long labels in both languages.
 - Never translate filesystem paths, command names, JSON field names, or routine identifiers.
 
@@ -431,7 +434,7 @@ Future agents should implement the app in these phases and stop each phase only 
 | 0. Scaffold | Vite, Electron main/preload/renderer entrypoints, TypeScript config, app scripts, empty shell UI. | App starts locally, `typecheck`, `lint`, and `test` scripts exist and run. |
 | 1. Readonly model | Settings, inventory scan, install matrix scan, diagnostics, docs view, no write commands. | Renderer shows real source Skills/workflows and diagnostics without executing writes. |
 | 2. Plan and validation | Config open/validate, dry-run plan generation, repository gates, command output viewer. | Dry-run plan and validation gates run through allowlisted IPC and task logs. |
-| 3. Controlled writes | Manifest write, apply, force apply confirmation, single-task queue, cancellation, archive writer. | Write paths require confirmation and produce reviewable task evidence. |
+| 3. Controlled writes | Manifest write, merge apply, replace-listed, sync-prune confirmation, single-task queue, cancellation, archive writer. | Write paths require confirmation and produce reviewable task evidence. |
 | 4. Product UI | Install Matrix as primary view, Distribute Wizard, theme tokens, i18n, platform menus, shortcuts. | English and Simplified Chinese work without restart; light, dark, and system themes are checked. |
 | 5. Release readiness | Directory packaging dry-run, artifact exclusion checks, security review, cross-platform QA notes. | Packaging remains unsigned/unpublished unless explicitly approved; release risks are documented. |
 
@@ -473,7 +476,7 @@ Before implementation is considered ready:
 - Renderer cannot execute arbitrary commands.
 - IPC is allowlisted and parameter-validated.
 - Plan generation remains dry-run by default.
-- Apply and Force Apply require explicit confirmation.
+- Merge, replace-listed, and sync-prune require explicit confirmation.
 - Write commands run through a single-task queue with log streaming and cancellation where safe.
 - Manifest writes, distribution apply, and archive writes produce durable review evidence.
 - The full repository validation gate set passes.

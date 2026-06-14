@@ -5,6 +5,7 @@ if ($Help) {
     Write-Host 'and validates the emitted JSON against the published output contract.'
     Write-Host 'When bash is available, also runs the Bash twin of every workflow and asserts'
     Write-Host 'parity: same exit code, same ok flag, same check names, and same warning/error counts.'
+    Write-Host 'A bash-backed sh executable is used when native bash is not visible.'
     exit 0
 }
 $ErrorActionPreference = 'Stop'
@@ -76,6 +77,15 @@ try {
     if ($null -ne $bashCommand) {
         if ($bashCommand.Source -notmatch '(?i)\\System32\\bash\.exe$') {
             $parityShell = $bashCommand.Source
+        }
+    }
+    if ($null -eq $parityShell) {
+        $shCommand = Get-Command sh -ErrorAction SilentlyContinue
+        if ($null -ne $shCommand) {
+            $versionOutput = & $shCommand.Source --version 2>$null | Select-Object -First 1
+            if ($LASTEXITCODE -eq 0 -and $versionOutput -match '(?i)\bbash\b') {
+                $parityShell = $shCommand.Source
+            }
         }
     }
 

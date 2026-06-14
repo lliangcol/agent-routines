@@ -12,8 +12,10 @@ for skill_dir in "$skill_root"/*; do
   skill="$(basename "$skill_dir")"
   skill_md="$skill_dir/SKILL.md"
   readme="$skill_dir/README.md"
+  readme_zh="$skill_dir/README.zh-CN.md"
   [ -f "$skill_md" ] || { errors+=("Missing SKILL.md: $skill"); continue; }
   [ -f "$readme" ] || errors+=("Missing README.md: $skill")
+  [ -f "$readme_zh" ] || errors+=("Missing README.zh-CN.md: $skill")
   head -n 1 "$skill_md" | grep -qx -- '---' || errors+=("Missing YAML frontmatter: $skill")
   name="$(grep -E '^name:[[:space:]]*[a-z0-9-]+[[:space:]]*$' "$skill_md" | head -n 1 | sed -E 's/^name:[[:space:]]*//; s/[[:space:]]*$//')"
   description="$(grep -E '^description:[[:space:]]*.+' "$skill_md" | head -n 1 | sed -E 's/^description:[[:space:]]*//')"

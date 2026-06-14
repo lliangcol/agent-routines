@@ -19,7 +19,7 @@
 
 Use user-level installation for personal routines that apply across repositories. Use project-level installation when a repository needs pinned behavior, reviewable Skill content, or team-specific workflow versions.
 
-Use manifest installation when a single reviewed file should decide both scopes. Manifest mode is additive: it copies only the listed Skill and workflow directories and never removes installed items that are not listed.
+Use the static distribution manifest when a single reviewed file should decide both scopes for a known repository set. The checked-in static manifest remains `version: 1` and is intentionally additive in normal `merge` installs: it copies only the listed Skill and workflow directories and does not remove installed items that are not listed.
 
 ```json
 {
@@ -42,15 +42,15 @@ Use manifest installation when a single reviewed file should decide both scopes.
 }
 ```
 
-PowerShell manifest entrypoints use `-ManifestPath <path>`. Bash entrypoints use `--manifest-path PATH` and require one available JSON parser from `python3`, `python`, `node`, or `jq`. Relative project paths in a manifest are resolved from the source repository root. `-Force` and `--force` replace listed targets that already exist. `-WhatIf` and `--dry-run` report planned installs and replacements without creating directories, copying files, deleting files, or replacing targets. Manifest mode should use the dedicated `install-manifest` entrypoints, not the user or project installers.
+PowerShell manifest entrypoints use `-ManifestPath <path>`. Bash entrypoints use `--manifest-path PATH` and require one available JSON parser from `python3`, `python`, `node`, or `jq`. Relative project paths in a manifest are resolved from the source repository root. Prefer `-Mode merge`, `-Mode replace-listed`, or `-Mode dry-run` on PowerShell and `--mode merge`, `--mode replace-listed`, or `--mode dry-run` on Bash. `-Force` and `--force` are compatibility shims for `replace-listed`, not a separate distribution policy. Manifest mode should use the dedicated `install-manifest` entrypoints, not the user or project installers.
 
 The default example manifest installs only broadly reusable Skills at user level and keeps project-level entries to common workflow runtime folders. Project-owned Skills such as repository-specific payment, database, or agent projections should stay in those projects unless explicitly promoted.
 
-For existing machines with many user-level and project-level installs, use install discovery to generate a reviewed manifest plan from explicit project roots instead of hand-editing distribution manifests. See [Install Discovery](install-discovery.md).
+For existing machines with many user-level and project-level installs, use install discovery config v2 to generate a reviewed desired-state plan from explicit project roots instead of hand-editing distribution manifests. The generated v2 manifest includes `desiredTargets[]`, `actions[]`, `backupPlan`, `restorePlan`, unknown/unclassified report-only items, and an action summary. See [Install Discovery](install-discovery.md).
 
 ## Update Strategy
 
-Update from the source repository, rerun validators, then run a dry-run (`-WhatIf` or `--dry-run`) before reinstalling with `--force` or `-Force`. Do not treat installed folders as the source of truth.
+Update from the source repository, rerun validators, then run a dry-run (`-WhatIf`, `--dry-run`, or `--mode dry-run`) before replacing listed targets. Do not treat installed folders as the source of truth.
 
 ## Uninstall Strategy
 

@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "projectRoots": [
+    "D:\\Repositories"
+  ],
+  "tools": ["codex", "claudeCode"],
+  "projectDiscovery": {
+    "mode": "git-repos",
+    "maxDepth": 2,
+    "excludeDirs": [".git", "node_modules"],
+    "skipNestedRepos": true
+  },
+  "scopePolicy": {
+    "desiredStateSource": "policy-with-installed-evidence",
+    "userLevelSkills": ["guarded-change"],
+    "projectLevelOnlySkills": [],
+    "userLevelWorkflows": ["preflight"],
+    "projectDefaultWorkflows": ["preflight"],
+    "unknownInstalledItems": "report-only"
+  },
+  "output": {
+    "manifestPath": ".agent-routines/generated/install.v1-fixture.manifest.json",
+    "reportPath": ".agent-routines/generated/install.v1-fixture.plan.json"
+  },
+  "install": {
+    "validateBeforeInstall": true,
+    "verifyAfterInstall": true,
+    "force": false
+  }
+}

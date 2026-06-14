@@ -1,12 +1,78 @@
 {
-  "version": 1,
-  "projectRoots": [
-    "D:\\Work\\Projects",
-    "D:\\Repositories"
+  "version": 2,
+  "userTargets": {
+    "enabled": true,
+    "tools": ["codex", "claudeCode"],
+    "skills": {
+      "codex": [
+        "guarded-change",
+        "review-loop",
+        "merge-fix",
+        "env-audit",
+        "runtime-repair",
+        "commit-guard",
+        "prompt-qa",
+        "release-guard",
+        "security-review",
+        "github-guard",
+        "graph-audit"
+      ],
+      "claudeCode": [
+        "guarded-change",
+        "review-loop",
+        "merge-fix",
+        "env-audit",
+        "runtime-repair",
+        "commit-guard",
+        "prompt-qa",
+        "release-guard",
+        "security-review",
+        "github-guard",
+        "graph-audit"
+      ]
+    },
+    "workflows": [
+      "preflight",
+      "gate-check",
+      "merge-check",
+      "runtime-check",
+      "commit-check",
+      "release-check",
+      "security-check",
+      "github-check",
+      "graph-check"
+    ]
+  },
+  "projectDefaults": {
+    "enabled": true,
+    "tools": ["codex", "claudeCode"],
+    "skills": {
+      "codex": [],
+      "claudeCode": []
+    },
+    "workflows": ["preflight", "gate-check", "governance-check"],
+    "createTargets": false,
+    "mode": "merge"
+  },
+  "projectTargets": [
+    {
+      "path": "D:\\Repositories\\agent-routines",
+      "enabled": true,
+      "tools": ["codex", "claudeCode"],
+      "skills": {
+        "codex": ["electron-app-builder"],
+        "claudeCode": ["electron-app-builder"]
+      },
+      "workflows": ["preflight", "gate-check"],
+      "createTargets": false,
+      "mode": "merge"
+    }
   ],
-  "tools": ["codex", "claudeCode"],
-  "projectDiscovery": {
-    "mode": "git-repos",
+  "discovery": {
+    "roots": [
+      "D:\\Work\\Projects",
+      "D:\\Repositories"
+    ],
     "maxDepth": 4,
     "excludeDirs": [
       ".git",
@@ -23,54 +89,31 @@
       ".codex",
       ".claude"
     ],
-    "skipNestedRepos": true
+    "skipNestedRepos": true,
+    "rootOptions": [
+      {
+        "root": "D:\\Work\\Projects",
+        "skipNestedRepos": true
+      },
+      {
+        "root": "D:\\Repositories",
+        "skipNestedRepos": true
+      }
+    ]
   },
-  "scopePolicy": {
-    "desiredStateSource": "policy-with-installed-evidence",
-    "userLevelSkills": [
-      "guarded-change",
-      "review-loop",
-      "merge-fix",
-      "env-audit",
-      "runtime-repair",
-      "commit-guard",
-      "prompt-qa",
-      "release-guard",
-      "security-review",
-      "github-guard",
-      "graph-audit"
-    ],
-    "projectLevelOnlySkills": [
+  "promotionRules": {
+    "doNotPromoteToUserSkills": [
       "pay-docs",
       "dms-repair",
       "api-sync",
       "node-workspace-release"
-    ],
-    "userLevelWorkflows": [
-      "preflight",
-      "gate-check",
-      "merge-check",
-      "runtime-check",
-      "commit-check",
-      "release-check",
-      "security-check",
-      "github-check",
-      "graph-check"
-    ],
-    "projectDefaultWorkflows": [
-      "preflight",
-      "gate-check",
-      "governance-check"
-    ],
-    "unknownInstalledItems": "report-only"
+    ]
   },
   "output": {
     "manifestPath": ".agent-routines/generated/install.manifest.json",
     "reportPath": ".agent-routines/generated/install.plan.json"
   },
-  "install": {
-    "validateBeforeInstall": true,
-    "verifyAfterInstall": true,
-    "force": false
+  "applySafety": {
+    "unknownInstalledItems": "report-only"
   }
 }

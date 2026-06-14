@@ -10,7 +10,7 @@ errors=()
 for workflow_dir in "$workflow_root"/*; do
   [ -d "$workflow_dir" ] || continue
   name="$(basename "$workflow_dir")"
-  for item in "README.md" "$name.ps1" "$name.sh" "schema.json" "examples/sample-output.json"; do
+  for item in "README.md" "README.zh-CN.md" "$name.ps1" "$name.sh" "schema.json" "examples/sample-output.json"; do
     [ -e "$workflow_dir/$item" ] || errors+=("Missing workflow file: $name/$item")
   done
   schema="$workflow_dir/schema.json"

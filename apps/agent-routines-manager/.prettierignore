@@ -1,0 +1,7 @@
+dist/
+out/
+release/
+coverage/
+node_modules/
+test-results/
+playwright-report/

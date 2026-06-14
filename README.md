@@ -96,7 +96,7 @@ Use a JSON manifest when you need one reviewed source of truth for which Skills 
 ./adapters/claude-code/install-manifest.sh --manifest-path ./distribution/agent-routines.manifest.json
 ```
 
-Manifest mode copies only the listed Skill and workflow folders. It does not remove installed content that is absent from the manifest. Use `-Force` or `--force` to replace listed targets that already exist.
+Manifest mode copies only the listed Skill and workflow folders in `merge` mode. It does not remove installed content that is absent from the manifest. Use `-Mode replace-listed` or `--mode replace-listed` to replace listed targets that already exist; `-Force` and `--force` remain compatibility aliases for that mode.
 
 Before broad or team installation, run the installer dry-run mode once and review the target paths. PowerShell installers use `-WhatIf`; Bash installers use `--dry-run`.
 
@@ -110,7 +110,7 @@ When a machine already has user-level and project-level installs spread across k
 ./tools/generate-install-manifest.sh --config-path ./.agent-routines/install-discovery.config.json
 ```
 
-See `docs/install-discovery.md` and `tools/install-discovery.config.example.json`. The generator is dry-run by default; installation requires `-WriteManifest -Apply` or `--write-manifest --apply`.
+See `docs/install-discovery.md` and `tools/install-discovery.config.example.json`. The generator is dry-run by default; installation requires `-WriteManifest -Apply` or `--write-manifest --apply`, with an explicit mode such as `merge`, `replace-listed`, or `sync-prune`.
 
 ## Installation Self-Check
 
@@ -140,8 +140,8 @@ The workflow runtime includes readonly checks for preflight state, gates, commit
 - `workflows/`: deterministic workflow scripts, schemas, and sample outputs.
 - `adapters/`: Codex and Claude Code installers and uninstallers.
 - `distribution/`: manifest examples for reviewed user-level and project-level distribution.
-- `docs/`: architecture, distribution, compatibility, security, diagrams, authoring manuals, the Electron app execution plan, UI design contract, prerequisite plan, and the release process.
-- `tests/`: structure, Skill, workflow, docs, and manifest validators plus workflow smoke tests, for PowerShell and Bash.
+- `docs/`: architecture, distribution, install discovery, compatibility, security, diagrams, authoring manuals, Electron app execution and UI/distribution design contracts, prerequisite plan, and release process.
+- `tests/`: structure, Skill, workflow, docs, manifest, and install-discovery config validators plus workflow smoke tests, for PowerShell and Bash.
 - `tools/`: config-driven utilities for manifest discovery and installation planning.
 - `executions/`: durable evidence packs for significant operations, following the archive-record layout.
 
