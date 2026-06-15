@@ -16,7 +16,7 @@
       "codex": ["guarded-change", "review-loop", "node-workspace-release", "security-review", "commit-guard"],
       "claudeCode": ["guarded-change", "review-loop", "node-workspace-release", "security-review", "commit-guard"]
     },
-    "workflows": ["preflight", "gate-check", "node-workspace-check", "security-check", "commit-check"],
+    "workflows": ["preflight", "gate-check", "node-workspace-check", "security-check", "commit-check", "release-check"],
     "createTargets": false,
     "mode": "merge"
   },
@@ -29,7 +29,7 @@
         "codex": ["guarded-change", "review-loop", "node-workspace-release", "security-review", "commit-guard"],
         "claudeCode": ["guarded-change", "review-loop", "node-workspace-release", "security-review", "commit-guard"]
       },
-      "workflows": ["preflight", "gate-check", "node-workspace-check", "security-check", "commit-check"],
+      "workflows": ["preflight", "gate-check", "node-workspace-check", "security-check", "commit-check", "release-check"],
       "createTargets": false,
       "mode": "merge"
     }

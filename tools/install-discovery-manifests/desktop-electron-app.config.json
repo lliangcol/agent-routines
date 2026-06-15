@@ -16,7 +16,7 @@
       "codex": ["electron-app-builder", "desktop-qa", "desktop-design-system", "desktop-packaging-release", "i18n-checklist"],
       "claudeCode": ["electron-app-builder", "desktop-qa", "desktop-design-system", "desktop-packaging-release", "i18n-checklist"]
     },
-    "workflows": ["preflight", "gate-check", "node-workspace-check", "security-check", "release-check"],
+    "workflows": ["preflight", "gate-check", "node-workspace-check", "runtime-check", "security-check", "release-check", "doc-check"],
     "createTargets": false,
     "mode": "merge"
   },
@@ -29,7 +29,7 @@
         "codex": ["electron-app-builder", "desktop-qa", "desktop-design-system", "desktop-packaging-release", "i18n-checklist"],
         "claudeCode": ["electron-app-builder", "desktop-qa", "desktop-design-system", "desktop-packaging-release", "i18n-checklist"]
       },
-      "workflows": ["preflight", "gate-check", "node-workspace-check", "security-check", "release-check"],
+      "workflows": ["preflight", "gate-check", "node-workspace-check", "runtime-check", "security-check", "release-check", "doc-check"],
       "createTargets": false,
       "mode": "merge"
     }
