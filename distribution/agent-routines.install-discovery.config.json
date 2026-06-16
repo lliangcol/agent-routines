@@ -1,0 +1,107 @@
+{
+  "version": 2,
+  "userTargets": {
+    "enabled": true,
+    "tools": ["codex", "claudeCode"],
+    "skills": {
+      "codex": [
+        "guarded-change",
+        "review-loop",
+        "merge-fix",
+        "env-audit",
+        "runtime-repair",
+        "commit-guard",
+        "prompt-qa",
+        "release-guard",
+        "security-review",
+        "github-guard",
+        "graph-audit"
+      ],
+      "claudeCode": [
+        "guarded-change",
+        "review-loop",
+        "merge-fix",
+        "env-audit",
+        "runtime-repair",
+        "commit-guard",
+        "prompt-qa",
+        "release-guard",
+        "security-review",
+        "github-guard",
+        "graph-audit"
+      ]
+    },
+    "workflows": [
+      "preflight",
+      "gate-check",
+      "merge-check",
+      "runtime-check",
+      "commit-check",
+      "release-check",
+      "security-check",
+      "github-check",
+      "graph-check"
+    ]
+  },
+  "projectDefaults": {
+    "enabled": true,
+    "tools": ["codex", "claudeCode"],
+    "skills": {
+      "codex": [],
+      "claudeCode": []
+    },
+    "workflows": ["preflight", "gate-check", "governance-check"],
+    "createTargets": false,
+    "mode": "merge"
+  },
+  "projectTargets": [
+    {
+      "path": ".",
+      "enabled": true,
+      "tools": ["codex", "claudeCode"],
+      "skills": {
+        "codex": [],
+        "claudeCode": []
+      },
+      "workflows": [
+        "preflight",
+        "gate-check",
+        "governance-check",
+        "node-workspace-check",
+        "drift-check"
+      ],
+      "createTargets": false,
+      "mode": "merge"
+    }
+  ],
+  "discovery": {
+    "roots": [],
+    "maxDepth": 3,
+    "excludeDirs": [
+      ".git",
+      "node_modules",
+      "vendor",
+      "dist",
+      "build",
+      "target",
+      ".tmp",
+      ".cache",
+      "tmp",
+      "temp",
+      ".agent-routines",
+      ".codex",
+      ".claude"
+    ],
+    "skipNestedRepos": true
+  },
+  "promotionRules": {
+    "doNotPromoteToUserSkills": []
+  },
+  "output": {
+    "manifestPath": "distribution/agent-routines.install.manifest.json",
+    "reportPath": "distribution/agent-routines.install.plan.json"
+  },
+  "applySafety": {
+    "unknownInstalledItems": "report-only"
+  }
+}
